@@ -1,0 +1,9 @@
+C:\Users\IIIristraM\Documents\Visual Studio 2010\Projects\Parcsis_Test_1_WCF\DomainModel\bin\Debug\DomainModel.dll
+C:\Users\IIIristraM\Documents\Visual Studio 2010\Projects\Parcsis_Test_1_WCF\DomainModel\bin\Debug\DomainModel.pdb
+C:\Users\IIIristraM\Documents\Visual Studio 2010\Projects\Parcsis_Test_1_WCF\DomainModel\obj\Debug\DomainModel.dll
+C:\Users\IIIristraM\Documents\Visual Studio 2010\Projects\Parcsis_Test_1_WCF\DomainModel\obj\Debug\DomainModel.pdb
+C:\Users\IIIristraM\Documents\Visual Studio 2010\Projects\PT1_RelativesInfoService\DomainModel\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\IIIristraM\Documents\Visual Studio 2010\Projects\PT1_RelativesInfoService\DomainModel\bin\Debug\DomainModel.dll
+C:\Users\IIIristraM\Documents\Visual Studio 2010\Projects\PT1_RelativesInfoService\DomainModel\bin\Debug\DomainModel.pdb
+C:\Users\IIIristraM\Documents\Visual Studio 2010\Projects\PT1_RelativesInfoService\DomainModel\obj\Debug\DomainModel.dll
+C:\Users\IIIristraM\Documents\Visual Studio 2010\Projects\PT1_RelativesInfoService\DomainModel\obj\Debug\DomainModel.pdb
