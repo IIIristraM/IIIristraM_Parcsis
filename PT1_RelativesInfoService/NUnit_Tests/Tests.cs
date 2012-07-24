@@ -13,23 +13,30 @@ using System.Xml.Serialization;
 using System.Xml;
 using System.Threading;
 
+//тесты сервиса для NUnit
 namespace NUnit_Tests
 {
     [TestFixture]
     public class Tests
     {
+        //строка соединения с БД
         private static string ConStr = @"Server =.\SQLEXPRESS; Database = PT1_DB; Trusted_Connection = yes;";
+        //экземпляр БД
         private static IPersonesRepository PersonesDB = new PersonesRepository(ConStr);
+        //формат отправляемых сервису и возвращаемых сервисом данных
         private static string dataFormat = "json";
+        //режим работы для методов AddRelative и UpdateRelationshipState
         private static string mode = "auto";
 
-        
+        //тесты для функции сервиса GetRelativesList
         public static void TestGetRelativesList()
         {
+            //настройка сериализации типа DateTime в JSON
             JsonSerializerSettings settings = new JsonSerializerSettings();
             settings.DateFormatHandling = DateFormatHandling.MicrosoftDateFormat;
-            
+            //адресс функции сервиса
             string operationUrl = "http://localhost:8732/Design_Time_Addresses/RESTService/GetRelativesList";
+            //параметры для функции
             string pasportNumber = "3610123456";
             Person filter = new Person { Adresse = "", 
                                          DateOfBirth = new DateTime(), 
@@ -40,11 +47,16 @@ namespace NUnit_Tests
                                          Sex = "", 
                                          ThirdName = "" };
 
+            //создание и отправка запроса сервису
             #region Send Request
+            //описание Url запроса
             WebRequest req = WebRequest.Create(operationUrl + "?pasportNumber=" + pasportNumber);
+            //описание метода запрса
             req.Method = "POST";
             req.Timeout = 12000;
+            //описание формата обмена данными
             req.ContentType = "application/" + dataFormat;
+            //конвертация параметров из С# в соответствующий формат
             #region Create params
             string filterStr = "";
             if (dataFormat == "json")
@@ -111,13 +123,13 @@ namespace NUnit_Tests
             sendStream.Write(data, 0, data.Length);
             sendStream.Close();
             #endregion
-
+            //получение и обработка ответа сервиса
             #region Get Response
             WebResponse resp = req.GetResponse();
             System.IO.Stream stream = resp.GetResponseStream();
             StreamReader sr = new System.IO.StreamReader(stream);
             List<Relative> result = new List<Relative>();
-
+            //конвертация строки ответа в объект C# типа List<Relative>
             if (dataFormat == "json")
             {
                 string s = sr.ReadToEnd();
@@ -141,7 +153,7 @@ namespace NUnit_Tests
             Assert.IsTrue(result.Count == 1);
             Assert.IsTrue(result.First().RelationshipState == "father");
         }
-        
+        //тесты для функции сервиса AddRelative
         public static void TestAddRelative()
         {
             dataFormat = "json";
@@ -188,6 +200,7 @@ namespace NUnit_Tests
                 req.ContentType = "application/" + dataFormat;
                 req.ContentLength = data.Length;
                 #endregion
+
                 #region Send Request
                 Console.WriteLine("iter - " + i);
                 stream = req.GetRequestStream();
@@ -216,7 +229,7 @@ namespace NUnit_Tests
             Assert.IsTrue(personesCount[0] == personesCount[1]);
             Assert.IsTrue(relationshipCount[0] == relationshipCount[1]);
         }
-      
+        //тесты для функции сервиса DeleteRelative
         public static void TestDeleteRelative()
         {
             dataFormat = "json";
@@ -240,6 +253,7 @@ namespace NUnit_Tests
                 req = WebRequest.Create(operationUrl + "/" + pasportNumber + "/" + relPasportNumber);
                 req.ContentType = "application/" + dataFormat;
                 #endregion
+
                 #region Send Request
                 Console.WriteLine("iter - " + i);
                 #endregion
@@ -266,7 +280,7 @@ namespace NUnit_Tests
             Assert.IsTrue(relationshipCount[0] == relationshipCount[1]);
 
         }
-        
+        //тесты для функции сервиса UpdateRelative
         public static void TestUpdateRelative()
         {
             dataFormat = "json";
@@ -311,6 +325,7 @@ namespace NUnit_Tests
                 req.ContentType = "application/" + dataFormat;
                 req.ContentLength = data.Length;
                 #endregion
+
                 #region Send Request
                 Console.WriteLine("iter - " + i);
                 stream = req.GetRequestStream();
@@ -336,7 +351,7 @@ namespace NUnit_Tests
                 i++;
             }
         }
-
+        //тесты для функции сервиса UpdateRelationshipState
         public static void TestUpdateRelationshipState()
         {
             dataFormat = "json";
@@ -402,6 +417,7 @@ namespace NUnit_Tests
 
         }
 
+        //управление порядком тестирования
         [Test]
         public static void GlobalTest()
         {

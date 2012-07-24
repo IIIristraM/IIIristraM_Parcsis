@@ -7,3 +7,8 @@ C:\Users\IIIristraM\Documents\Visual Studio 2010\Projects\PT1_RelativesInfoServi
 C:\Users\IIIristraM\Documents\Visual Studio 2010\Projects\PT1_RelativesInfoService\DomainModel\bin\Debug\DomainModel.pdb
 C:\Users\IIIristraM\Documents\Visual Studio 2010\Projects\PT1_RelativesInfoService\DomainModel\obj\Debug\DomainModel.dll
 C:\Users\IIIristraM\Documents\Visual Studio 2010\Projects\PT1_RelativesInfoService\DomainModel\obj\Debug\DomainModel.pdb
+C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\DomainModel\bin\Debug\DomainModel.dll
+C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\DomainModel\bin\Debug\DomainModel.pdb
+C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\DomainModel\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\DomainModel\obj\Debug\DomainModel.dll
+C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\DomainModel\obj\Debug\DomainModel.pdb

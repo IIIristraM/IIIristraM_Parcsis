@@ -16,3 +16,13 @@ C:\Users\IIIristraM\Documents\Visual Studio 2010\Projects\PT1_RelativesInfoServi
 C:\Users\IIIristraM\Documents\Visual Studio 2010\Projects\PT1_RelativesInfoService\ConsoleHost\bin\Debug\DomainModel.pdb
 C:\Users\IIIristraM\Documents\Visual Studio 2010\Projects\PT1_RelativesInfoService\ConsoleHost\obj\x86\Debug\ConsoleHost.exe
 C:\Users\IIIristraM\Documents\Visual Studio 2010\Projects\PT1_RelativesInfoService\ConsoleHost\obj\x86\Debug\ConsoleHost.pdb
+C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\ConsoleHost\bin\Debug\ConsoleHost.exe.config
+C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\ConsoleHost\obj\x86\Debug\ConsoleHost.exe
+C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\ConsoleHost\obj\x86\Debug\ConsoleHost.pdb
+C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\ConsoleHost\bin\Debug\ConsoleHost.exe
+C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\ConsoleHost\bin\Debug\ConsoleHost.pdb
+C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\ConsoleHost\bin\Debug\RelativesInfoService.dll
+C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\ConsoleHost\bin\Debug\DomainModel.dll
+C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\ConsoleHost\bin\Debug\RelativesInfoService.pdb
+C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\ConsoleHost\bin\Debug\DomainModel.pdb
+C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\ConsoleHost\obj\x86\Debug\ResolveAssemblyReference.cache

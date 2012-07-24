@@ -9,6 +9,7 @@ using DomainModel.Abstract;
 using System.ServiceModel.Activation;
 using System.Data.Linq;
 
+//реализация контракта сервиса
 namespace RelativesInfoService.Implementations
 {
     //[AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed)]
@@ -19,6 +20,7 @@ namespace RelativesInfoService.Implementations
 
         public RelativesInfoService()
         {
+            //устанавливается соеденение с БД
             ConStr = @"Server =.\SQLEXPRESS; Database = PT1_DB; Trusted_Connection = yes;";
             PersonesDB = new PersonesRepository(ConStr);
         }
@@ -27,11 +29,13 @@ namespace RelativesInfoService.Implementations
         {
             
             List<Relative> list = new List<Relative>();
+            //производим запрос к базе
             var result = from p1 in PersonesDB.Persones
                      from r in PersonesDB.Relationships
                      from p2 in PersonesDB.Persones
                      where ((p1.PasportNumber == pasportNumber) && (((p1.PersonID == r.SecondPersonID) && (p2.PersonID == r.FirstPersonID)) || ((p1.PersonID == r.FirstPersonID) && (p2.PersonID == r.SecondPersonID))))
                      select new { r, p2 };
+            //фильтруем результат
             if (filter != null)
             {
                 if (filter.Adresse != "")
@@ -65,17 +69,36 @@ namespace RelativesInfoService.Implementations
                     result = result.Where(r => r.p2.ThirdName == filter.ThirdName);
                 }
             }
+            //создаем список
             if (result.Count() > 0)
             {
                 foreach (var r in result)
                 {
                     string state = "";
+                    //запись в таблице Relationships имеет вид
+                    // <RelationshipID, FirstPersonID, SecondPersonID, State>
+                    // читается как:
+                    // первая персона приходится второй тем-то
+                    //пример:
+                    // 1 2 4 father
+                    // персона2 приходится персоне4 отцом
+                    //пользователь получает ответ вида:
+                    //данный человек приходится мне тем-то
+                    //т.е. по логике ответа родственник должен стоять на FirstPersonID, чтобы соответствовать
+                    //типу родственного отношения
+                    //т.о. если в БД он находится на SecondPersonID, то отношение необходимо инвертировать
+                    //пример:
+                    //запись БД: Вася Пете отец
+                    //запрос исходит от Васи (т.е. родственник не на FirstPersonID)
+                    //ответ сервиса:
+                    //Петя мне сын
                     if (r.p2.PersonID == r.r.FirstPersonID)
                     {
                         list.Add(new Relative(r.p2, r.r.State));
                     }
                     else
                     {
+                        //инвертировани родственного отношения
                         #region Relationship logic
                         if ((r.r.State == "son") || (r.r.State == "daughter"))
                         {
@@ -125,6 +148,7 @@ namespace RelativesInfoService.Implementations
             Relationship relationship;
             try
             {
+                //проверяем есть ли уже родственник в таблице Persones, если нет - добавляем
                 var result = from p in PersonesDB.Persones where p.PasportNumber == relative.Person.PasportNumber select p.PersonID;
                 if (result.Count() == 0)
                 {
@@ -138,6 +162,7 @@ namespace RelativesInfoService.Implementations
                     relativeID = result.First();
                 }
                 personID = (from p in PersonesDB.Persones where p.PasportNumber == pasportNumber select p.PersonID).First();
+                //проверяем существует ли уже между персоной и родственником отношение, если нет - создаем
                 result = from r in PersonesDB.Relationships
                          where (((r.FirstPersonID == relativeID) && (r.SecondPersonID == personID)) ||
                                ((r.FirstPersonID == personID) && (r.SecondPersonID == relativeID)))
@@ -147,6 +172,7 @@ namespace RelativesInfoService.Implementations
                     relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = personID, State = relative.RelationshipState };
                     ((Table<Relationship>)(PersonesDB.Relationships)).InsertOnSubmit(relationship);
                 }
+                //запрашиваем список родственников персоны
                 List<Relative> relatives = GetRelativesList(pasportNumber, null);
                 if ((relatives.Count != 0)&&(mode == "auto"))
                 {
@@ -154,6 +180,8 @@ namespace RelativesInfoService.Implementations
                     {
                         relationship = null;
                         string newState = "";
+                        //проверяем есть ли в базе отношение между добавленным родственником и существующим, если нет - 
+                        //пытаемся определить тип отношения и добавить
                         result = from r in PersonesDB.Relationships
                                  where (((r.FirstPersonID == relativeID) && (r.SecondPersonID == rel.Person.PersonID)) ||
                                        ((r.FirstPersonID == rel.Person.PersonID) && (r.SecondPersonID == relativeID)))
@@ -162,6 +190,9 @@ namespace RelativesInfoService.Implementations
                         {
                             switch (relative.RelationshipState)
                             {
+                                //определение типа родственного отношения, читается как:
+                                //если новый родственник приходится мне тем-то(case) и у меня есть тот-то(if),
+                                //то новый родственник приходится старому тем-то(newState)
                                 #region Relationship logic
                                 case ("son"):
                                     if ((rel.RelationshipState == "son") || (rel.RelationshipState == "daughter"))
@@ -396,6 +427,7 @@ namespace RelativesInfoService.Implementations
             int code = 1;
             try
             {
+                //ищем и удаляем запись, если запись не существует, функция вернет - 0
                 var result = from r in PersonesDB.Relationships
                              from p1 in PersonesDB.Persones
                              from p2 in PersonesDB.Persones
@@ -420,6 +452,7 @@ namespace RelativesInfoService.Implementations
             int code = 1;
             try
             {
+                //ищем родственника в БД
                 var result = from r in PersonesDB.Relationships
                              from p1 in PersonesDB.Persones
                              from p2 in PersonesDB.Persones
@@ -428,6 +461,7 @@ namespace RelativesInfoService.Implementations
                                         (((r.FirstPersonID == p2.PersonID) && (r.SecondPersonID == p1.PersonID)) ||
                                         ((r.FirstPersonID == p1.PersonID) && (r.SecondPersonID == p2.PersonID))))
                              select p2;
+                //если нашли, обновляем
                 if (result.Count() == 1)
                 {
                     var r = result.First();
@@ -458,6 +492,7 @@ namespace RelativesInfoService.Implementations
             int code = 1;
             try
             {
+                //ищем отношение в БД
                 var result = from r in PersonesDB.Relationships
                              from p1 in PersonesDB.Persones
                              from p2 in PersonesDB.Persones
@@ -466,6 +501,7 @@ namespace RelativesInfoService.Implementations
                                     (((r.FirstPersonID == p2.PersonID) && (r.SecondPersonID == p1.PersonID)) ||
                                     ((r.FirstPersonID == p1.PersonID) && (r.SecondPersonID == p2.PersonID))))
                              select new { r, p1, p2.PersonID };
+                //если нашли - обновляем
                 if (result.Count() == 1)
                 {
                     var r = result.First();
@@ -476,6 +512,7 @@ namespace RelativesInfoService.Implementations
                     }
                     else
                     {
+                        //если необходимо - инвертируем
                         #region Relationship logic
                         string state = "";
                         if ((updatedState == "son") || (updatedState == "daughter"))
@@ -513,6 +550,7 @@ namespace RelativesInfoService.Implementations
                         #endregion
                         r.r.State = state;
                     }
+                    //получаем список родственников персоны с pasportNumber1 - отправившей запрос персоны
                     List<Relative> relatives = GetRelativesList(pasportNumber1, null);
                     if ((relatives.Count != 0) && (mode == "auto"))
                     {
@@ -524,6 +562,8 @@ namespace RelativesInfoService.Implementations
                             int count;
                             if (relativeID != rel.Person.PersonID)
                             {
+                                //определям существует ли уже отношение между отредактированным родственником
+                                //и другим родственником из списка 
                                 var resultRS = from rs in PersonesDB.Relationships
                                                where (((rs.FirstPersonID == relativeID) && (rs.SecondPersonID == rel.Person.PersonID)) ||
                                                      ((rs.FirstPersonID == rel.Person.PersonID) && (rs.SecondPersonID == relativeID)))
@@ -531,6 +571,7 @@ namespace RelativesInfoService.Implementations
 
                                 count = resultRS.Count();
 
+                                //пытаемся определить новое отношение
                                 switch (updatedState)
                                 {
                                     #region Relationship logic
@@ -753,10 +794,12 @@ namespace RelativesInfoService.Implementations
                                 {
                                     if (count == 0)
                                     {
+                                        //если определили отношение, которого не существовало - добавляем
                                         ((Table<Relationship>)(PersonesDB.Relationships)).InsertOnSubmit(relationship);
                                     }
                                     else
                                     {
+                                        //если определили отношение, которого уже существовало - заменяем, если необходимо
                                         var RS = resultRS.First();
                                         if (relationship.State != RS.State)
                                             UpdateRelationshipState(rel.Person.PasportNumber, pasportNumber2, relationship.State, "manually");
@@ -764,6 +807,7 @@ namespace RelativesInfoService.Implementations
                                 }
                                 else
                                 {
+                                    //если не определили новое отношение, но существовало старое - удаляем его
                                     if (count != 0)
                                         DeleteRelative(rel.Person.PasportNumber, pasportNumber2);
                                 }

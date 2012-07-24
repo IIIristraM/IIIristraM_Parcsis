@@ -10,3 +10,15 @@ C:\Users\IIIristraM\Documents\Visual Studio 2010\Projects\PT1_RelativesInfoServi
 C:\Users\IIIristraM\Documents\Visual Studio 2010\Projects\PT1_RelativesInfoService\NUnit_Tests\bin\Debug\nunit.framework.xml
 C:\Users\IIIristraM\Documents\Visual Studio 2010\Projects\PT1_RelativesInfoService\NUnit_Tests\obj\Debug\NUnit_Tests.dll
 C:\Users\IIIristraM\Documents\Visual Studio 2010\Projects\PT1_RelativesInfoService\NUnit_Tests\obj\Debug\NUnit_Tests.pdb
+C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\NUnit_Tests\bin\Debug\NUnit_Tests.dll
+C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\NUnit_Tests\bin\Debug\NUnit_Tests.pdb
+C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\NUnit_Tests\bin\Debug\DomainModel.dll
+C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\NUnit_Tests\bin\Debug\Newtonsoft.Json.dll
+C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\NUnit_Tests\bin\Debug\nunit.framework.dll
+C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\NUnit_Tests\bin\Debug\DomainModel.pdb
+C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\NUnit_Tests\bin\Debug\Newtonsoft.Json.pdb
+C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\NUnit_Tests\bin\Debug\Newtonsoft.Json.xml
+C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\NUnit_Tests\bin\Debug\nunit.framework.xml
+C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\NUnit_Tests\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\NUnit_Tests\obj\Debug\NUnit_Tests.dll
+C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\NUnit_Tests\obj\Debug\NUnit_Tests.pdb

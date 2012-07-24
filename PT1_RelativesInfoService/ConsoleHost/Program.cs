@@ -5,6 +5,8 @@ using System.Text;
 using System.ServiceModel;
 using RISI = RelativesInfoService.Implementations;
 
+//хостинг сервиса
+//при отладке проект должен быть установлен как StartUp
 namespace ConsoleHost
 {
     class Program

@@ -5,8 +5,11 @@ using System.Text;
 using System.Data.Linq.Mapping;
 using System.Runtime.Serialization;
 
+
+//отражает основные сущности предметной области
 namespace DomainModel.Entities
 {
+    //дублирует аналогичную таблицу БД
     [Table(Name = "Persones")]
     [DataContract(Namespace = "http://Person")]
     public class Person
@@ -37,6 +40,7 @@ namespace DomainModel.Entities
         public string Adresse { get; set; }
     }
 
+    //дублирует аналогичную таблицу БД
     [Table(Name = "Relationships")]
     [DataContract]
     public class Relationship
@@ -55,11 +59,14 @@ namespace DomainModel.Entities
         public string State { get; set; }
     }
 
+    //вспомогательный класс, позволяет более понятно и удобно написать функционал
     [DataContract]
     public class Relative
     {
+        //детализация по персоне родственника
         [DataMember]
         public Person Person { get; set; }
+        //тип родственной связи
         [DataMember]
         public string RelationshipState { get; set; }
 

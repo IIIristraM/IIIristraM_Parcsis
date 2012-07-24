@@ -3,3 +3,8 @@ C:\Users\IIIristraM\Documents\Visual Studio 2010\Projects\PT1_RelativesInfoServi
 C:\Users\IIIristraM\Documents\Visual Studio 2010\Projects\PT1_RelativesInfoService\ASP_Client\obj\Debug\ResolveAssemblyReference.cache
 C:\Users\IIIristraM\Documents\Visual Studio 2010\Projects\PT1_RelativesInfoService\ASP_Client\obj\Debug\ASP_Client.dll
 C:\Users\IIIristraM\Documents\Visual Studio 2010\Projects\PT1_RelativesInfoService\ASP_Client\obj\Debug\ASP_Client.pdb
+C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\ASP_Client\bin\ASP_Client.dll
+C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\ASP_Client\bin\ASP_Client.pdb
+C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\ASP_Client\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\ASP_Client\obj\Debug\ASP_Client.dll
+C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\ASP_Client\obj\Debug\ASP_Client.pdb

@@ -6,6 +6,7 @@ using DomainModel.Abstract;
 using DomainModel.Entities;
 using System.Data.Linq;
 
+//реализация интерфейса доступа к БД
 namespace DomainModel.Concrete
 {
     public class PersonesRepository : IPersonesRepository
