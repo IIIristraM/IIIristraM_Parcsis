@@ -13,6 +13,6 @@ namespace DomainModel.Abstract
         public abstract void AddContext(string contextName, string conStr);
         public abstract void SubmitChanges();
 
-        public abstract AbstractRepository<T> CreateRepository<T>(string contextName) where T:class;
+        public abstract IRepository<T> CreateRepository<T>(string contextName) where T:class;
     }
 }

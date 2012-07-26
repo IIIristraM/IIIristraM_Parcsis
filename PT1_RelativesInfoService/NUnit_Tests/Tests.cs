@@ -21,8 +21,12 @@ namespace NUnit_Tests
     {
         //строка соединения с БД
         private static string conStr = @"Server =.\SQLEXPRESS; Database = PT1_DB; Trusted_Connection = yes;";
-        //экземпляр БД
-        private static IPersonesRepository personesDB = new PersonesRepository(conStr);
+        //экземпляр контекста
+        private static AbstractContextDB context = new ContextDB();
+        //экземпляр таблицы Persones
+        private static IRepository<Person> persones;
+        //экземпляр таблицы Relationships
+        private static IRepository<Relationship> relationships;
         //формат отправляемых сервису и возвращаемых сервисом данных
         private static string dataFormat = "json";
         //режим работы для методов AddRelative и UpdateRelationshipState
@@ -219,8 +223,8 @@ namespace NUnit_Tests
                 Assert.IsTrue(result == 1);
                 Console.WriteLine(result);
 
-                var sqlP = from p in personesDB.Persones select p.PersonID;
-                var sqlR = from r in personesDB.Relationships select r.RelationshipID;
+                var sqlP = from p in persones.GetContent() select p.PersonID;
+                var sqlR = from r in relationships.GetContent() select r.RelationshipID;
                 personesCount[i] = sqlP.Count();
                 relationshipCount[i] = sqlR.Count();
                 i++;
@@ -269,8 +273,8 @@ namespace NUnit_Tests
 
                 if (i == 0) { Assert.IsTrue(result == 1); } else { Assert.IsTrue(result == 0); }
 
-                var sqlP = from p in personesDB.Persones select p.PersonID;
-                var sqlR = from r in personesDB.Relationships select r.RelationshipID;
+                var sqlP = from p in persones.GetContent() select p.PersonID;
+                var sqlR = from r in relationships.GetContent() select r.RelationshipID;
                 personesCount[i] = sqlP.Count();
                 relationshipCount[i] = sqlR.Count();
                 i++;
@@ -343,7 +347,7 @@ namespace NUnit_Tests
 
                 Assert.IsTrue(result == 1);
 
-                var sql = from p in personesDB.Persones where p.PassportNumber == relPasportNumber select p.FirstName;
+                var sql = from p in persones.GetContent() where p.PassportNumber == relPasportNumber select p.FirstName;
                 Console.WriteLine(sql.First());
                 Console.WriteLine(updatedRelative.FirstName);
                 Assert.IsTrue(sql.First() == updatedRelative.FirstName);
@@ -395,8 +399,8 @@ namespace NUnit_Tests
 
                 Assert.IsTrue(result == 1);
 
-                var sql = from r in personesDB.Relationships
-                          from p in personesDB.Persones
+                var sql = from r in relationships.GetContent()
+                          from p in persones.GetContent()
                           where ((p.PassportNumber == relPasportNumber) &&
                                 ((p.PersonID == r.FirstPersonID) || (p.PersonID == r.SecondPersonID)))
                           select r.State;
@@ -421,6 +425,9 @@ namespace NUnit_Tests
         [Test]
         public static void GlobalTest()
         {
+            context.AddContext("PT1_DB", conStr);
+            persones = context.CreateRepository<Person>("PT1_DB");
+            relationships = context.CreateRepository<Relationship>("PT1_DB");
             Console.WriteLine("Start TestGetRelativesList");
             Console.WriteLine("XML");
             dataFormat = "xml";

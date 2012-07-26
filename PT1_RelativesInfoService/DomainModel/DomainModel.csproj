@@ -43,7 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Abstract\AbstractContextDB.cs" />
-    <Compile Include="Abstract\AbstractRepository.cs" />
+    <Compile Include="Abstract\IRepository.cs" />
     <Compile Include="Concrete\ContextDB.cs" />
     <Compile Include="Concrete\Repository.cs" />
     <Compile Include="Entities\Person.cs" />

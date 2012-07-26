@@ -8,6 +8,7 @@ using DomainModel.Concrete;
 using DomainModel.Abstract;
 using System.ServiceModel.Activation;
 using System.Data.Linq;
+using System.Configuration;
 
 //реализация контракта сервиса
 namespace RelativesInfoService.Implementations
@@ -16,13 +17,18 @@ namespace RelativesInfoService.Implementations
     public class RelativesInfoService : IRelativesInfoService
     {
         public string ConStr { get; set; }
-        public IPersonesRepository PersonesDB { get; set; }
+        public AbstractContextDB Context { get; set; }
+        public IRepository<Person> Persones { get; set; }
+        public IRepository<Relationship> Relationships { get; set; }
 
         public RelativesInfoService()
         {
             //устанавливается соеденение с БД
-            ConStr = @"Server =.\SQLEXPRESS; Database = PT1_DB; Trusted_Connection = yes;";
-            PersonesDB = new PersonesRepository(ConStr);
+            ConStr = ConfigurationManager.ConnectionStrings["PT1_DB"].ConnectionString;
+            Context = new ContextDB();
+            Context.AddContext("PT1_DB", ConStr);
+            Persones = Context.CreateRepository<Person>("PT1_DB");
+            Relationships = Context.CreateRepository<Relationship>("PT1_DB");
         }
 
         public List<Relative> GetRelativesList(string pasportNumber, Person filter) 
@@ -30,9 +36,9 @@ namespace RelativesInfoService.Implementations
             
             List<Relative> list = new List<Relative>();
             //производим запрос к базе
-            var result = from p1 in PersonesDB.Persones
-                     from r in PersonesDB.Relationships
-                     from p2 in PersonesDB.Persones
+            var result = from p1 in Persones.GetContent()
+                     from r in Relationships.GetContent()
+                     from p2 in Persones.GetContent()
                      where ((p1.PassportNumber == pasportNumber) && (((p1.PersonID == r.SecondPersonID) && (p2.PersonID == r.FirstPersonID)) || ((p1.PersonID == r.FirstPersonID) && (p2.PersonID == r.SecondPersonID))))
                      select new { r, p2 };
             //фильтруем результат
@@ -149,26 +155,26 @@ namespace RelativesInfoService.Implementations
             try
             {
                 //проверяем есть ли уже родственник в таблице Persones, если нет - добавляем
-                var result = from p in PersonesDB.Persones where p.PassportNumber == relative.Person.PassportNumber select p.PersonID;
+                var result = from p in Persones.GetContent() where p.PassportNumber == relative.Person.PassportNumber select p.PersonID;
                 if (result.Count() == 0)
                 {
                     if ((relative.Person.DateOfBirth != null)&&(relative.Person.DateOfBirth.Value.Year < 1900)) relative.Person.DateOfBirth = null;
-                    ((Table<Person>)PersonesDB.Persones).InsertOnSubmit(relative.Person);
-                    PersonesDB.DC.SubmitChanges();
+                    Persones.Insert(relative.Person);
+                    Context.SubmitChanges();
                     relativeID = relative.Person.PersonID;
                 }
                 else
                 {
                     relativeID = result.First();
                 }
-                personID = (from p in PersonesDB.Persones where p.PassportNumber == pasportNumber select p.PersonID).First();
+                personID = (from p in Persones.GetContent() where p.PassportNumber == pasportNumber select p.PersonID).First();
                 //запрашиваем список родственников персоны
                 List<Relative> relatives = GetRelativesList(pasportNumber, null);
                 //проверяем существует ли уже между персоной и родственником отношение, если нет - создаем
                 if (relatives.Where(rel => rel.Person.PersonID == relativeID).Count() == 0)
                 {
                     relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = personID, State = relative.RelationshipState };
-                    ((Table<Relationship>)(PersonesDB.Relationships)).InsertOnSubmit(relationship);
+                    Relationships.Insert(relationship);
                 }
                 if ((relatives.Count != 0)&&(mode == "auto"))
                 {
@@ -178,7 +184,7 @@ namespace RelativesInfoService.Implementations
                         string newState = "";
                         //проверяем есть ли в базе отношение между добавленным родственником и существующим, если нет - 
                         //пытаемся определить тип отношения и добавить
-                        result = from r in PersonesDB.Relationships
+                        result = from r in Relationships.GetContent()
                                  where (((r.FirstPersonID == relativeID) && (r.SecondPersonID == rel.Person.PersonID)) ||
                                        ((r.FirstPersonID == rel.Person.PersonID) && (r.SecondPersonID == relativeID)))
                                  select r.RelationshipID;
@@ -404,11 +410,11 @@ namespace RelativesInfoService.Implementations
                                     break;
                                 #endregion
                             }
-                            if (relationship != null) ((Table<Relationship>)(PersonesDB.Relationships)).InsertOnSubmit(relationship);
+                            if (relationship != null) Relationships.Insert(relationship);
                         }
                     }
                 }
-                PersonesDB.DC.SubmitChanges();
+                Context.SubmitChanges();
             }
             catch (Exception e)
             {
@@ -424,16 +430,16 @@ namespace RelativesInfoService.Implementations
             try
             {
                 //ищем и удаляем запись, если запись не существует, функция вернет - 0
-                var result = from r in PersonesDB.Relationships
-                             from p1 in PersonesDB.Persones
-                             from p2 in PersonesDB.Persones
+                var result = from r in Relationships.GetContent()
+                             from p1 in Persones.GetContent()
+                             from p2 in Persones.GetContent()
                              where ((p1.PassportNumber == pasportNumber) &&
                                     (p2.PassportNumber == relPasportNumber) &&
                                     (((r.FirstPersonID == p2.PersonID) && (r.SecondPersonID == p1.PersonID)) ||
                                     ((r.FirstPersonID == p1.PersonID) && (r.SecondPersonID == p2.PersonID))))
                              select r;
-                ((Table<Relationship>)PersonesDB.Relationships).DeleteOnSubmit(result.First());
-                PersonesDB.DC.SubmitChanges();
+                Relationships.Delete(result.First());
+                Context.SubmitChanges();
             }
             catch (Exception e)
             {
@@ -449,9 +455,9 @@ namespace RelativesInfoService.Implementations
             try
             {
                 //ищем родственника в БД
-                var result = from r in PersonesDB.Relationships
-                             from p1 in PersonesDB.Persones
-                             from p2 in PersonesDB.Persones
+                var result = from r in Relationships.GetContent()
+                             from p1 in Persones.GetContent()
+                             from p2 in Persones.GetContent()
                              where ((p1.PassportNumber == pasportNumber) &&
                                         (p2.PassportNumber == relPasportNumber) &&
                                         (((r.FirstPersonID == p2.PersonID) && (r.SecondPersonID == p1.PersonID)) ||
@@ -468,7 +474,7 @@ namespace RelativesInfoService.Implementations
                     if (updatedRelative.SecondName != "") r.SecondName = updatedRelative.SecondName;
                     if (updatedRelative.Sex != "") r.Sex = updatedRelative.Sex;
                     if (updatedRelative.ThirdName != "") r.ThirdName = updatedRelative.ThirdName;
-                    PersonesDB.DC.SubmitChanges();
+                    Context.SubmitChanges();
                 }
                 else
                 {
@@ -489,9 +495,9 @@ namespace RelativesInfoService.Implementations
             try
             {
                 //ищем отношение в БД
-                var result = from r in PersonesDB.Relationships
-                             from p1 in PersonesDB.Persones
-                             from p2 in PersonesDB.Persones
+                var result = from r in Relationships.GetContent()
+                             from p1 in Persones.GetContent()
+                             from p2 in Persones.GetContent()
                              where ((p1.PassportNumber == pasportNumber1) &&
                                     (p2.PassportNumber == pasportNumber2) &&
                                     (((r.FirstPersonID == p2.PersonID) && (r.SecondPersonID == p1.PersonID)) ||
@@ -560,7 +566,7 @@ namespace RelativesInfoService.Implementations
                             {
                                 //определям существует ли уже отношение между отредактированным родственником
                                 //и другим родственником из списка 
-                                var resultRS = from rs in PersonesDB.Relationships
+                                var resultRS = from rs in Relationships.GetContent()
                                                where (((rs.FirstPersonID == relativeID) && (rs.SecondPersonID == rel.Person.PersonID)) ||
                                                      ((rs.FirstPersonID == rel.Person.PersonID) && (rs.SecondPersonID == relativeID)))
                                                select rs;
@@ -791,7 +797,7 @@ namespace RelativesInfoService.Implementations
                                     if (count == 0)
                                     {
                                         //если определили отношение, которого не существовало - добавляем
-                                        ((Table<Relationship>)(PersonesDB.Relationships)).InsertOnSubmit(relationship);
+                                        Relationships.Insert(relationship);
                                     }
                                     else
                                     {
@@ -810,7 +816,7 @@ namespace RelativesInfoService.Implementations
                             }
                         }
                     }
-                    PersonesDB.DC.SubmitChanges();
+                    Context.SubmitChanges();
                 }
                 else
                 {

@@ -28,7 +28,7 @@ namespace DomainModel.Concrete
             }
         }
 
-        public override AbstractRepository<T> CreateRepository<T>(string contextName)
+        public override IRepository<T> CreateRepository<T>(string contextName)
         {
             DataContext dc;
             contexts.TryGetValue(contextName, out dc);
