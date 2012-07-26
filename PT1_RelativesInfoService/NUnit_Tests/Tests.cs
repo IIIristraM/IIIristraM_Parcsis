@@ -13,16 +13,16 @@ using System.Xml.Serialization;
 using System.Xml;
 using System.Threading;
 
-//тесты сервиса для NUnit
 namespace NUnit_Tests
 {
+    //тесты сервиса для NUnit
     [TestFixture]
     public class Tests
     {
         //строка соединения с БД
-        private static string ConStr = @"Server =.\SQLEXPRESS; Database = PT1_DB; Trusted_Connection = yes;";
+        private static string conStr = @"Server =.\SQLEXPRESS; Database = PT1_DB; Trusted_Connection = yes;";
         //экземпляр БД
-        private static IPersonesRepository PersonesDB = new PersonesRepository(ConStr);
+        private static IPersonesRepository personesDB = new PersonesRepository(conStr);
         //формат отправляемых сервису и возвращаемых сервисом данных
         private static string dataFormat = "json";
         //режим работы для методов AddRelative и UpdateRelationshipState
@@ -38,10 +38,10 @@ namespace NUnit_Tests
             string operationUrl = "http://localhost:8732/Design_Time_Addresses/RESTService/GetRelativesList";
             //параметры для функции
             string pasportNumber = "3610123456";
-            Person filter = new Person { Adresse = "", 
+            Person filter = new Person { Adress = "", 
                                          DateOfBirth = new DateTime(), 
                                          FirstName = "Igor", 
-                                         PasportNumber = "", 
+                                         PassportNumber = "", 
                                          PersonID = 0, 
                                          SecondName = "", 
                                          Sex = "", 
@@ -67,10 +67,10 @@ namespace NUnit_Tests
             {
                 filterStr = "<GetRelativesList>" + 
                             "<filter xmlns:a=\"http://Person\">" +
-                            "<a:Adresse>" + filter.Adresse + "</a:Adresse>" +
+                            "<a:Adress>" + filter.Adress + "</a:Adress>" +
                             "<a:DateOfBirth>" + filter.DateOfBirth.Value.ToString("o") + "</a:DateOfBirth>" +
                             "<a:FirstName>" + filter.FirstName + "</a:FirstName>" +
-                            "<a:PasportNumber>" + filter.PasportNumber + "</a:PasportNumber>" +
+                            "<a:PassportNumber>" + filter.PassportNumber + "</a:PassportNumber>" +
                             "<a:PersonID>" + filter.PersonID + "</a:PersonID>" +
                             "<a:SecondName>" + filter.SecondName + "</a:SecondName>" +
                             "<a:Sex>" + filter.Sex + "</a:Sex>" +
@@ -164,10 +164,10 @@ namespace NUnit_Tests
             string pasportNumber = "3610123456";
             Person person = new Person
             {
-                Adresse = "",
+                Adress = "",
                 DateOfBirth = null,
                 FirstName = "Julia",
-                PasportNumber = "3610112233",
+                PassportNumber = "3610112233",
                 PersonID = 0,
                 SecondName = "Glazacheva",
                 Sex = "female",
@@ -219,8 +219,8 @@ namespace NUnit_Tests
                 Assert.IsTrue(result == 1);
                 Console.WriteLine(result);
 
-                var sqlP = from p in PersonesDB.Persones select p.PersonID;
-                var sqlR = from r in PersonesDB.Relationships select r.RelationshipID;
+                var sqlP = from p in personesDB.Persones select p.PersonID;
+                var sqlR = from r in personesDB.Relationships select r.RelationshipID;
                 personesCount[i] = sqlP.Count();
                 relationshipCount[i] = sqlR.Count();
                 i++;
@@ -269,8 +269,8 @@ namespace NUnit_Tests
 
                 if (i == 0) { Assert.IsTrue(result == 1); } else { Assert.IsTrue(result == 0); }
 
-                var sqlP = from p in PersonesDB.Persones select p.PersonID;
-                var sqlR = from r in PersonesDB.Relationships select r.RelationshipID;
+                var sqlP = from p in personesDB.Persones select p.PersonID;
+                var sqlR = from r in personesDB.Relationships select r.RelationshipID;
                 personesCount[i] = sqlP.Count();
                 relationshipCount[i] = sqlR.Count();
                 i++;
@@ -292,10 +292,10 @@ namespace NUnit_Tests
             string relPasportNumber = "3215654321";
             Person updatedRelative = new Person
             {
-                Adresse = "",
+                Adress = "",
                 DateOfBirth = null,
                 FirstName = "Vasily",
-                PasportNumber = "",
+                PassportNumber = "",
                 PersonID = 0,
                 SecondName = "",
                 Sex = "",
@@ -343,7 +343,7 @@ namespace NUnit_Tests
 
                 Assert.IsTrue(result == 1);
 
-                var sql = from p in PersonesDB.Persones where p.PasportNumber == relPasportNumber select p.FirstName;
+                var sql = from p in personesDB.Persones where p.PassportNumber == relPasportNumber select p.FirstName;
                 Console.WriteLine(sql.First());
                 Console.WriteLine(updatedRelative.FirstName);
                 Assert.IsTrue(sql.First() == updatedRelative.FirstName);
@@ -395,9 +395,9 @@ namespace NUnit_Tests
 
                 Assert.IsTrue(result == 1);
 
-                var sql = from r in PersonesDB.Relationships
-                          from p in PersonesDB.Persones
-                          where ((p.PasportNumber == relPasportNumber) &&
+                var sql = from r in personesDB.Relationships
+                          from p in personesDB.Persones
+                          where ((p.PassportNumber == relPasportNumber) &&
                                 ((p.PersonID == r.FirstPersonID) || (p.PersonID == r.SecondPersonID)))
                           select r.State;
 

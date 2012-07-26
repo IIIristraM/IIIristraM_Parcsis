@@ -19,7 +19,7 @@ namespace DomainModel.Entities
         public int PersonID {get; set;}
         [Column]
         [DataMember]
-        public string PasportNumber { get; set; }
+        public string PassportNumber { get; set; }
         [Column]
         [DataMember]
         public string FirstName { get; set; }
@@ -37,7 +37,7 @@ namespace DomainModel.Entities
         public DateTime? DateOfBirth { get; set; }
         [Column]
         [DataMember]
-        public string Adresse { get; set; }
+        public string Adress { get; set; }
     }
 
     //дублирует аналогичную таблицу БД

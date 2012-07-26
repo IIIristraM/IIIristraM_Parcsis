@@ -33,14 +33,14 @@ namespace RelativesInfoService.Implementations
             var result = from p1 in PersonesDB.Persones
                      from r in PersonesDB.Relationships
                      from p2 in PersonesDB.Persones
-                     where ((p1.PasportNumber == pasportNumber) && (((p1.PersonID == r.SecondPersonID) && (p2.PersonID == r.FirstPersonID)) || ((p1.PersonID == r.FirstPersonID) && (p2.PersonID == r.SecondPersonID))))
+                     where ((p1.PassportNumber == pasportNumber) && (((p1.PersonID == r.SecondPersonID) && (p2.PersonID == r.FirstPersonID)) || ((p1.PersonID == r.FirstPersonID) && (p2.PersonID == r.SecondPersonID))))
                      select new { r, p2 };
             //фильтруем результат
             if (filter != null)
             {
-                if (filter.Adresse != "")
+                if (filter.Adress != "")
                 {
-                    result = result.Where(r => r.p2.Adresse == filter.Adresse);
+                    result = result.Where(r => r.p2.Adress == filter.Adress);
                 }
                 if ((filter.DateOfBirth != null)&&(filter.DateOfBirth.Value.Year >= 1900))
                 {
@@ -52,9 +52,9 @@ namespace RelativesInfoService.Implementations
                 {
                     result = result.Where(r => r.p2.FirstName == filter.FirstName);
                 }
-                if (filter.PasportNumber != "")
+                if (filter.PassportNumber != "")
                 {
-                    result = result.Where(r => r.p2.PasportNumber == filter.PasportNumber);
+                    result = result.Where(r => r.p2.PassportNumber == filter.PassportNumber);
                 }
                 if (filter.SecondName != "")
                 {
@@ -149,7 +149,7 @@ namespace RelativesInfoService.Implementations
             try
             {
                 //проверяем есть ли уже родственник в таблице Persones, если нет - добавляем
-                var result = from p in PersonesDB.Persones where p.PasportNumber == relative.Person.PasportNumber select p.PersonID;
+                var result = from p in PersonesDB.Persones where p.PassportNumber == relative.Person.PassportNumber select p.PersonID;
                 if (result.Count() == 0)
                 {
                     if ((relative.Person.DateOfBirth != null)&&(relative.Person.DateOfBirth.Value.Year < 1900)) relative.Person.DateOfBirth = null;
@@ -161,19 +161,15 @@ namespace RelativesInfoService.Implementations
                 {
                     relativeID = result.First();
                 }
-                personID = (from p in PersonesDB.Persones where p.PasportNumber == pasportNumber select p.PersonID).First();
+                personID = (from p in PersonesDB.Persones where p.PassportNumber == pasportNumber select p.PersonID).First();
+                //запрашиваем список родственников персоны
+                List<Relative> relatives = GetRelativesList(pasportNumber, null);
                 //проверяем существует ли уже между персоной и родственником отношение, если нет - создаем
-                result = from r in PersonesDB.Relationships
-                         where (((r.FirstPersonID == relativeID) && (r.SecondPersonID == personID)) ||
-                               ((r.FirstPersonID == personID) && (r.SecondPersonID == relativeID)))
-                         select r.RelationshipID;
-                if (result.Count() == 0)
+                if (relatives.Where(rel => rel.Person.PersonID == relativeID).Count() == 0)
                 {
                     relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = personID, State = relative.RelationshipState };
                     ((Table<Relationship>)(PersonesDB.Relationships)).InsertOnSubmit(relationship);
                 }
-                //запрашиваем список родственников персоны
-                List<Relative> relatives = GetRelativesList(pasportNumber, null);
                 if ((relatives.Count != 0)&&(mode == "auto"))
                 {
                     foreach (var rel in relatives)
@@ -431,8 +427,8 @@ namespace RelativesInfoService.Implementations
                 var result = from r in PersonesDB.Relationships
                              from p1 in PersonesDB.Persones
                              from p2 in PersonesDB.Persones
-                             where ((p1.PasportNumber == pasportNumber) &&
-                                    (p2.PasportNumber == relPasportNumber) &&
+                             where ((p1.PassportNumber == pasportNumber) &&
+                                    (p2.PassportNumber == relPasportNumber) &&
                                     (((r.FirstPersonID == p2.PersonID) && (r.SecondPersonID == p1.PersonID)) ||
                                     ((r.FirstPersonID == p1.PersonID) && (r.SecondPersonID == p2.PersonID))))
                              select r;
@@ -456,8 +452,8 @@ namespace RelativesInfoService.Implementations
                 var result = from r in PersonesDB.Relationships
                              from p1 in PersonesDB.Persones
                              from p2 in PersonesDB.Persones
-                             where ((p1.PasportNumber == pasportNumber) &&
-                                        (p2.PasportNumber == relPasportNumber) &&
+                             where ((p1.PassportNumber == pasportNumber) &&
+                                        (p2.PassportNumber == relPasportNumber) &&
                                         (((r.FirstPersonID == p2.PersonID) && (r.SecondPersonID == p1.PersonID)) ||
                                         ((r.FirstPersonID == p1.PersonID) && (r.SecondPersonID == p2.PersonID))))
                              select p2;
@@ -465,10 +461,10 @@ namespace RelativesInfoService.Implementations
                 if (result.Count() == 1)
                 {
                     var r = result.First();
-                    if (updatedRelative.Adresse != "") r.Adresse = updatedRelative.Adresse;
+                    if (updatedRelative.Adress != "") r.Adress = updatedRelative.Adress;
                     if ((updatedRelative.DateOfBirth != null)&&(updatedRelative.DateOfBirth.Value.Year >= 1900)) r.DateOfBirth = updatedRelative.DateOfBirth;
                     if (updatedRelative.FirstName != "") r.FirstName = updatedRelative.FirstName;
-                    if (updatedRelative.PasportNumber != "") r.PasportNumber = updatedRelative.PasportNumber;
+                    if (updatedRelative.PassportNumber != "") r.PassportNumber = updatedRelative.PassportNumber;
                     if (updatedRelative.SecondName != "") r.SecondName = updatedRelative.SecondName;
                     if (updatedRelative.Sex != "") r.Sex = updatedRelative.Sex;
                     if (updatedRelative.ThirdName != "") r.ThirdName = updatedRelative.ThirdName;
@@ -496,8 +492,8 @@ namespace RelativesInfoService.Implementations
                 var result = from r in PersonesDB.Relationships
                              from p1 in PersonesDB.Persones
                              from p2 in PersonesDB.Persones
-                             where ((p1.PasportNumber == pasportNumber1) &&
-                                    (p2.PasportNumber == pasportNumber2) &&
+                             where ((p1.PassportNumber == pasportNumber1) &&
+                                    (p2.PassportNumber == pasportNumber2) &&
                                     (((r.FirstPersonID == p2.PersonID) && (r.SecondPersonID == p1.PersonID)) ||
                                     ((r.FirstPersonID == p1.PersonID) && (r.SecondPersonID == p2.PersonID))))
                              select new { r, p1, p2.PersonID };
@@ -802,14 +798,14 @@ namespace RelativesInfoService.Implementations
                                         //если определили отношение, которого уже существовало - заменяем, если необходимо
                                         var RS = resultRS.First();
                                         if (relationship.State != RS.State)
-                                            UpdateRelationshipState(rel.Person.PasportNumber, pasportNumber2, relationship.State, "manually");
+                                            UpdateRelationshipState(rel.Person.PassportNumber, pasportNumber2, relationship.State, "manually");
                                     }
                                 }
                                 else
                                 {
                                     //если не определили новое отношение, но существовало старое - удаляем его
                                     if (count != 0)
-                                        DeleteRelative(rel.Person.PasportNumber, pasportNumber2);
+                                        DeleteRelative(rel.Person.PassportNumber, pasportNumber2);
                                 }
                             }
                         }

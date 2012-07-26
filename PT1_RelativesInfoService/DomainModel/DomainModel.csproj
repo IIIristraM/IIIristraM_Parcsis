@@ -42,8 +42,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Abstract\IPersonesRepository.cs" />
-    <Compile Include="Concrete\PersonesRepository.cs" />
+    <Compile Include="Abstract\AbstractContextDB.cs" />
+    <Compile Include="Abstract\AbstractRepository.cs" />
+    <Compile Include="Concrete\ContextDB.cs" />
+    <Compile Include="Concrete\Repository.cs" />
     <Compile Include="Entities\Person.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
