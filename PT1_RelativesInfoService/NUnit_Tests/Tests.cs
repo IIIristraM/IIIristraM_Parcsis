@@ -22,7 +22,7 @@ namespace NUnit_Tests
         //строка соединения с БД
         private static string conStr = @"Server =.\SQLEXPRESS; Database = PT1_DB; Trusted_Connection = yes;";
         //экземпляр контекста
-        private static AbstractContextDB context = new ContextDB();
+        private static AbstractContextDB context;
         //экземпляр таблицы Persones
         private static IRepository<Person> persones;
         //экземпляр таблицы Relationships
@@ -425,9 +425,13 @@ namespace NUnit_Tests
         [Test]
         public static void GlobalTest()
         {
-            context.AddContext("PT1_DB", conStr);
-            persones = context.CreateRepository<Person>("PT1_DB");
-            relationships = context.CreateRepository<Relationship>("PT1_DB");
+            if (context == null)
+            {
+                context = new ContextDB();
+                context.AddContext("PT1_DB", conStr);
+                persones = context.CreateRepository<Person>("PT1_DB");
+                relationships = context.CreateRepository<Relationship>("PT1_DB");
+            }
             Console.WriteLine("Start TestGetRelativesList");
             Console.WriteLine("XML");
             dataFormat = "xml";

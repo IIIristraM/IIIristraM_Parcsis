@@ -31,8 +31,14 @@ namespace DomainModel.Concrete
         public override IRepository<T> CreateRepository<T>(string contextName)
         {
             DataContext dc;
-            contexts.TryGetValue(contextName, out dc);
-            return new Repository<T>(dc);
+            if (contexts.TryGetValue(contextName, out dc) == true)
+            { 
+                return new Repository<T>(dc); 
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

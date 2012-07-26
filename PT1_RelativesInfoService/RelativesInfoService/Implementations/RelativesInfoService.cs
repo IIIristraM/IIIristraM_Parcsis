@@ -418,7 +418,6 @@ namespace RelativesInfoService.Implementations
             }
             catch (Exception e)
             {
-                string message = e.Message;
                 code = 0;
             }
             return code; 
@@ -443,7 +442,6 @@ namespace RelativesInfoService.Implementations
             }
             catch (Exception e)
             {
-                string message = e.Message;
                 code = 0;
             }
             return code; 
@@ -483,7 +481,6 @@ namespace RelativesInfoService.Implementations
             }
             catch (Exception e)
             {
-                string message = e.Message;
                 code = 0;
             }
             return code; 
@@ -825,7 +822,6 @@ namespace RelativesInfoService.Implementations
             }
             catch (Exception e)
             {
-                string message = e.Message;
                 code = 0;
             }
             return code; 
