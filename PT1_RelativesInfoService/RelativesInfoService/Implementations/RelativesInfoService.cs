@@ -14,7 +14,7 @@ using System.Configuration;
 namespace RelativesInfoService.Implementations
 {
     //[AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed)]
-    public class RelativesInfoService : IRelativesInfoService
+    public class RelativesInfoService<TContext> : IRelativesInfoService where TContext: AbstractContextDB, new() 
     {
         public string ConStr { get; set; }
         public AbstractContextDB Context { get; set; }
@@ -25,7 +25,7 @@ namespace RelativesInfoService.Implementations
         {
             //устанавливается соеденение с БД
             ConStr = ConfigurationManager.ConnectionStrings["PT1_DB"].ConnectionString;
-            Context = new ContextDB();
+            Context = new TContext();
             Context.AddContext("PT1_DB", ConStr);
             Persones = Context.CreateRepository<Person>("PT1_DB");
             Relationships = Context.CreateRepository<Relationship>("PT1_DB");
