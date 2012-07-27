@@ -31,6 +31,16 @@ namespace RelativesInfoService.Implementations
             Relationships = Context.CreateRepository<Relationship>("PT1_DB");
         }
 
+        public Person GetPersonInfo(string pasportNumber)
+        {
+            Person info;
+            var result = from p in Persones.GetContent()
+                         where p.PassportNumber == pasportNumber
+                         select p;
+            info = result.FirstOrDefault();
+            return info;
+        }
+
         public List<Relative> GetRelativesList(string pasportNumber, Person filter) 
         {
             
@@ -44,9 +54,9 @@ namespace RelativesInfoService.Implementations
             //фильтруем результат
             if (filter != null)
             {
-                if (filter.Adress != "")
+                if (filter.Address != "")
                 {
-                    result = result.Where(r => r.p2.Adress == filter.Adress);
+                    result = result.Where(r => r.p2.Address == filter.Address);
                 }
                 if ((filter.DateOfBirth != null)&&(filter.DateOfBirth.Value.Year >= 1900))
                 {
@@ -465,7 +475,7 @@ namespace RelativesInfoService.Implementations
                 if (result.Count() == 1)
                 {
                     var r = result.First();
-                    if (updatedRelative.Adress != "") r.Adress = updatedRelative.Adress;
+                    if (updatedRelative.Address != "") r.Address = updatedRelative.Address;
                     if ((updatedRelative.DateOfBirth != null)&&(updatedRelative.DateOfBirth.Value.Year >= 1900)) r.DateOfBirth = updatedRelative.DateOfBirth;
                     if (updatedRelative.FirstName != "") r.FirstName = updatedRelative.FirstName;
                     if (updatedRelative.PassportNumber != "") r.PassportNumber = updatedRelative.PassportNumber;
@@ -549,266 +559,269 @@ namespace RelativesInfoService.Implementations
                         #endregion
                         r.r.State = state;
                     }
-                    //получаем список родственников персоны с pasportNumber1 - отправившей запрос персоны
-                    List<Relative> relatives = GetRelativesList(pasportNumber1, null);
-                    if ((relatives.Count != 0) && (mode == "auto"))
+                    if(mode == "auto")
                     {
-                        Relationship relationship;
-                        foreach (var rel in relatives)
+                        //получаем список родственников персоны с pasportNumber1 - отправившей запрос персоны
+                        List<Relative> relatives = GetRelativesList(pasportNumber1, null);
+                        if (relatives.Count != 0)
                         {
-                            relationship = null;
-                            string newState = "";
-                            int count;
-                            if (relativeID != rel.Person.PersonID)
+                            Relationship relationship;
+                            foreach (var rel in relatives)
                             {
-                                //определям существует ли уже отношение между отредактированным родственником
-                                //и другим родственником из списка 
-                                var resultRS = from rs in Relationships.GetContent()
-                                               where (((rs.FirstPersonID == relativeID) && (rs.SecondPersonID == rel.Person.PersonID)) ||
-                                                     ((rs.FirstPersonID == rel.Person.PersonID) && (rs.SecondPersonID == relativeID)))
-                                               select rs;
-
-                                count = resultRS.Count();
-
-                                //пытаемся определить новое отношение
-                                switch (updatedState)
+                                relationship = null;
+                                string newState = "";
+                                int count;
+                                if (relativeID != rel.Person.PersonID)
                                 {
-                                    #region Relationship logic
-                                    case ("son"):
-                                        if ((rel.RelationshipState == "son") || (rel.RelationshipState == "daughter"))
-                                        {
-                                            newState = "brother";
-                                            relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
-                                        }
-                                        else if ((rel.RelationshipState == "father") || (rel.RelationshipState == "mother"))
-                                        {
-                                            newState = "grandson";
-                                            relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
-                                        }
-                                        else if ((rel.RelationshipState == "sister") || (rel.RelationshipState == "brother"))
-                                        {
-                                            newState = "nephew";
-                                            relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
-                                        }
-                                        else if ((rel.RelationshipState == "wife") || (rel.RelationshipState == "husband"))
-                                        {
-                                            newState = "son";
-                                            relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
-                                        }
-                                        break;
-                                    case ("daughter"):
-                                        if ((rel.RelationshipState == "son") || (rel.RelationshipState == "daughter"))
-                                        {
-                                            newState = "sister";
-                                            relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
-                                        }
-                                        else if ((rel.RelationshipState == "father") || (rel.RelationshipState == "mother"))
-                                        {
-                                            newState = "granddaughter";
-                                            relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
-                                        }
-                                        else if ((rel.RelationshipState == "sister") || (rel.RelationshipState == "brother"))
-                                        {
-                                            newState = "niece";
-                                            relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
-                                        }
-                                        else if ((rel.RelationshipState == "wife") || (rel.RelationshipState == "husband"))
-                                        {
-                                            newState = "daughter";
-                                            relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
-                                        }
-                                        break;
-                                    case ("father"):
-                                        if ((rel.RelationshipState == "son") || (rel.RelationshipState == "daughter"))
-                                        {
-                                            newState = "grandfather";
-                                            relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
-                                        }
-                                        else if (rel.RelationshipState == "mother")
-                                        {
-                                            newState = "husband";
-                                            relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
-                                        }
-                                        else if ((rel.RelationshipState == "sister") || (rel.RelationshipState == "brother"))
-                                        {
-                                            newState = "father";
-                                            relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
-                                        }
-                                        break;
-                                    case ("mother"):
-                                        if ((rel.RelationshipState == "son") || (rel.RelationshipState == "daughter"))
-                                        {
-                                            newState = "grandmother";
-                                            relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
-                                        }
-                                        else if (rel.RelationshipState == "father")
-                                        {
-                                            newState = "wife";
-                                            relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
-                                        }
-                                        else if ((rel.RelationshipState == "sister") || (rel.RelationshipState == "brother"))
-                                        {
-                                            newState = "mother";
-                                            relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
-                                        }
-                                        break;
-                                    case ("sister"):
-                                        if ((rel.RelationshipState == "son") || (rel.RelationshipState == "daughter"))
-                                        {
-                                            newState = "aunt";
-                                            relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
-                                        }
-                                        else if ((rel.RelationshipState == "father") || (rel.RelationshipState == "mother"))
-                                        {
-                                            newState = "daughter";
-                                            relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
-                                        }
-                                        else if ((rel.RelationshipState == "sister") || (rel.RelationshipState == "brother"))
-                                        {
-                                            newState = "sister";
-                                            relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
-                                        }
-                                        else if ((rel.RelationshipState == "grandfather") || (rel.RelationshipState == "grandmother"))
-                                        {
-                                            newState = "granddaughter";
-                                            relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
-                                        }
-                                        else if ((rel.RelationshipState == "aunt") || (rel.RelationshipState == "uncle"))
-                                        {
-                                            newState = "niece";
-                                            relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
-                                        }
-                                        else if ((rel.RelationshipState == "niece") || (rel.RelationshipState == "nephew"))
-                                        {
-                                            newState = "aunt";
-                                            relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
-                                        }
-                                        break;
-                                    case ("brother"):
-                                        if ((rel.RelationshipState == "son") || (rel.RelationshipState == "daughter"))
-                                        {
-                                            newState = "uncle";
-                                            relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
-                                        }
-                                        else if ((rel.RelationshipState == "father") || (rel.RelationshipState == "mother"))
-                                        {
-                                            newState = "son";
-                                            relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
-                                        }
-                                        else if ((rel.RelationshipState == "sister") || (rel.RelationshipState == "brother"))
-                                        {
-                                            newState = "brother";
-                                            relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
-                                        }
-                                        else if ((rel.RelationshipState == "grandfather") || (rel.RelationshipState == "grandmother"))
-                                        {
-                                            newState = "grandson";
-                                            relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
-                                        }
-                                        else if ((rel.RelationshipState == "aunt") || (rel.RelationshipState == "uncle"))
-                                        {
-                                            newState = "nephew";
-                                            relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
-                                        }
-                                        else if ((rel.RelationshipState == "niece") || (rel.RelationshipState == "nephew"))
-                                        {
-                                            newState = "uncle";
-                                            relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
-                                        }
-                                        break;
-                                    case ("wife"):
-                                        if ((rel.RelationshipState == "son") || (rel.RelationshipState == "daughter"))
-                                        {
-                                            newState = "mother";
-                                            relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
-                                        }
-                                        break;
-                                    case ("husband"):
-                                        if ((rel.RelationshipState == "son") || (rel.RelationshipState == "daughter"))
-                                        {
-                                            newState = "father";
-                                            relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
-                                        }
-                                        break;
-                                    case ("aunt"):
-                                        if ((rel.RelationshipState == "sister") || (rel.RelationshipState == "brother"))
-                                        {
-                                            newState = "aunt";
-                                            relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
-                                        }
-                                        break;
-                                    case ("uncle"):
-                                        if ((rel.RelationshipState == "sister") || (rel.RelationshipState == "brother"))
-                                        {
-                                            newState = "uncle";
-                                            relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
-                                        }
-                                        break;
-                                    case ("grandfather"):
-                                        if ((rel.RelationshipState == "sister") || (rel.RelationshipState == "brother"))
-                                        {
-                                            newState = "grandfather";
-                                            relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
-                                        }
-                                        break;
-                                    case ("grandmother"):
-                                        if ((rel.RelationshipState == "sister") || (rel.RelationshipState == "brother"))
-                                        {
-                                            newState = "grandmother";
-                                            relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
-                                        }
-                                        break;
-                                    case ("granddaughter"):
-                                        if ((rel.RelationshipState == "wife") || (rel.RelationshipState == "husband"))
-                                        {
-                                            newState = "granddaughter";
-                                            relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
-                                        }
-                                        break;
-                                    case ("grandson"):
-                                        if ((rel.RelationshipState == "wife") || (rel.RelationshipState == "husband"))
-                                        {
-                                            newState = "grandson";
-                                            relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
-                                        }
-                                        break;
-                                    case ("nephew"):
-                                        if ((rel.RelationshipState == "father") || (rel.RelationshipState == "mother"))
-                                        {
-                                            newState = "grandson";
-                                            relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
-                                        }
-                                        break;
-                                    case ("niece"):
-                                        if ((rel.RelationshipState == "father") || (rel.RelationshipState == "mother"))
-                                        {
-                                            newState = "granddaughter";
-                                            relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
-                                        }
-                                        break;
-                                    #endregion
-                                }
+                                    //определям существует ли уже отношение между отредактированным родственником
+                                    //и другим родственником из списка 
+                                    var resultRS = from rs in Relationships.GetContent()
+                                                   where (((rs.FirstPersonID == relativeID) && (rs.SecondPersonID == rel.Person.PersonID)) ||
+                                                         ((rs.FirstPersonID == rel.Person.PersonID) && (rs.SecondPersonID == relativeID)))
+                                                   select rs;
 
-                                if (relationship != null)
-                                {
-                                    if (count == 0)
+                                    count = resultRS.Count();
+
+                                    //пытаемся определить новое отношение
+                                    switch (updatedState)
                                     {
-                                        //если определили отношение, которого не существовало - добавляем
-                                        Relationships.Insert(relationship);
+                                        #region Relationship logic
+                                        case ("son"):
+                                            if ((rel.RelationshipState == "son") || (rel.RelationshipState == "daughter"))
+                                            {
+                                                newState = "brother";
+                                                relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
+                                            }
+                                            else if ((rel.RelationshipState == "father") || (rel.RelationshipState == "mother"))
+                                            {
+                                                newState = "grandson";
+                                                relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
+                                            }
+                                            else if ((rel.RelationshipState == "sister") || (rel.RelationshipState == "brother"))
+                                            {
+                                                newState = "nephew";
+                                                relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
+                                            }
+                                            else if ((rel.RelationshipState == "wife") || (rel.RelationshipState == "husband"))
+                                            {
+                                                newState = "son";
+                                                relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
+                                            }
+                                            break;
+                                        case ("daughter"):
+                                            if ((rel.RelationshipState == "son") || (rel.RelationshipState == "daughter"))
+                                            {
+                                                newState = "sister";
+                                                relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
+                                            }
+                                            else if ((rel.RelationshipState == "father") || (rel.RelationshipState == "mother"))
+                                            {
+                                                newState = "granddaughter";
+                                                relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
+                                            }
+                                            else if ((rel.RelationshipState == "sister") || (rel.RelationshipState == "brother"))
+                                            {
+                                                newState = "niece";
+                                                relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
+                                            }
+                                            else if ((rel.RelationshipState == "wife") || (rel.RelationshipState == "husband"))
+                                            {
+                                                newState = "daughter";
+                                                relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
+                                            }
+                                            break;
+                                        case ("father"):
+                                            if ((rel.RelationshipState == "son") || (rel.RelationshipState == "daughter"))
+                                            {
+                                                newState = "grandfather";
+                                                relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
+                                            }
+                                            else if (rel.RelationshipState == "mother")
+                                            {
+                                                newState = "husband";
+                                                relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
+                                            }
+                                            else if ((rel.RelationshipState == "sister") || (rel.RelationshipState == "brother"))
+                                            {
+                                                newState = "father";
+                                                relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
+                                            }
+                                            break;
+                                        case ("mother"):
+                                            if ((rel.RelationshipState == "son") || (rel.RelationshipState == "daughter"))
+                                            {
+                                                newState = "grandmother";
+                                                relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
+                                            }
+                                            else if (rel.RelationshipState == "father")
+                                            {
+                                                newState = "wife";
+                                                relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
+                                            }
+                                            else if ((rel.RelationshipState == "sister") || (rel.RelationshipState == "brother"))
+                                            {
+                                                newState = "mother";
+                                                relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
+                                            }
+                                            break;
+                                        case ("sister"):
+                                            if ((rel.RelationshipState == "son") || (rel.RelationshipState == "daughter"))
+                                            {
+                                                newState = "aunt";
+                                                relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
+                                            }
+                                            else if ((rel.RelationshipState == "father") || (rel.RelationshipState == "mother"))
+                                            {
+                                                newState = "daughter";
+                                                relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
+                                            }
+                                            else if ((rel.RelationshipState == "sister") || (rel.RelationshipState == "brother"))
+                                            {
+                                                newState = "sister";
+                                                relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
+                                            }
+                                            else if ((rel.RelationshipState == "grandfather") || (rel.RelationshipState == "grandmother"))
+                                            {
+                                                newState = "granddaughter";
+                                                relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
+                                            }
+                                            else if ((rel.RelationshipState == "aunt") || (rel.RelationshipState == "uncle"))
+                                            {
+                                                newState = "niece";
+                                                relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
+                                            }
+                                            else if ((rel.RelationshipState == "niece") || (rel.RelationshipState == "nephew"))
+                                            {
+                                                newState = "aunt";
+                                                relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
+                                            }
+                                            break;
+                                        case ("brother"):
+                                            if ((rel.RelationshipState == "son") || (rel.RelationshipState == "daughter"))
+                                            {
+                                                newState = "uncle";
+                                                relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
+                                            }
+                                            else if ((rel.RelationshipState == "father") || (rel.RelationshipState == "mother"))
+                                            {
+                                                newState = "son";
+                                                relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
+                                            }
+                                            else if ((rel.RelationshipState == "sister") || (rel.RelationshipState == "brother"))
+                                            {
+                                                newState = "brother";
+                                                relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
+                                            }
+                                            else if ((rel.RelationshipState == "grandfather") || (rel.RelationshipState == "grandmother"))
+                                            {
+                                                newState = "grandson";
+                                                relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
+                                            }
+                                            else if ((rel.RelationshipState == "aunt") || (rel.RelationshipState == "uncle"))
+                                            {
+                                                newState = "nephew";
+                                                relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
+                                            }
+                                            else if ((rel.RelationshipState == "niece") || (rel.RelationshipState == "nephew"))
+                                            {
+                                                newState = "uncle";
+                                                relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
+                                            }
+                                            break;
+                                        case ("wife"):
+                                            if ((rel.RelationshipState == "son") || (rel.RelationshipState == "daughter"))
+                                            {
+                                                newState = "mother";
+                                                relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
+                                            }
+                                            break;
+                                        case ("husband"):
+                                            if ((rel.RelationshipState == "son") || (rel.RelationshipState == "daughter"))
+                                            {
+                                                newState = "father";
+                                                relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
+                                            }
+                                            break;
+                                        case ("aunt"):
+                                            if ((rel.RelationshipState == "sister") || (rel.RelationshipState == "brother"))
+                                            {
+                                                newState = "aunt";
+                                                relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
+                                            }
+                                            break;
+                                        case ("uncle"):
+                                            if ((rel.RelationshipState == "sister") || (rel.RelationshipState == "brother"))
+                                            {
+                                                newState = "uncle";
+                                                relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
+                                            }
+                                            break;
+                                        case ("grandfather"):
+                                            if ((rel.RelationshipState == "sister") || (rel.RelationshipState == "brother"))
+                                            {
+                                                newState = "grandfather";
+                                                relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
+                                            }
+                                            break;
+                                        case ("grandmother"):
+                                            if ((rel.RelationshipState == "sister") || (rel.RelationshipState == "brother"))
+                                            {
+                                                newState = "grandmother";
+                                                relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
+                                            }
+                                            break;
+                                        case ("granddaughter"):
+                                            if ((rel.RelationshipState == "wife") || (rel.RelationshipState == "husband"))
+                                            {
+                                                newState = "granddaughter";
+                                                relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
+                                            }
+                                            break;
+                                        case ("grandson"):
+                                            if ((rel.RelationshipState == "wife") || (rel.RelationshipState == "husband"))
+                                            {
+                                                newState = "grandson";
+                                                relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
+                                            }
+                                            break;
+                                        case ("nephew"):
+                                            if ((rel.RelationshipState == "father") || (rel.RelationshipState == "mother"))
+                                            {
+                                                newState = "grandson";
+                                                relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
+                                            }
+                                            break;
+                                        case ("niece"):
+                                            if ((rel.RelationshipState == "father") || (rel.RelationshipState == "mother"))
+                                            {
+                                                newState = "granddaughter";
+                                                relationship = new Relationship { RelationshipID = 0, FirstPersonID = relativeID, SecondPersonID = rel.Person.PersonID, State = newState };
+                                            }
+                                            break;
+                                        #endregion
+                                    }
+
+                                    if (relationship != null)
+                                    {
+                                        if (count == 0)
+                                        {
+                                            //если определили отношение, которого не существовало - добавляем
+                                            Relationships.Insert(relationship);
+                                        }
+                                        else
+                                        {
+                                            //если определили отношение, которого уже существовало - заменяем, если необходимо
+                                            var RS = resultRS.First();
+                                            if (relationship.State != RS.State)
+                                                UpdateRelationshipState(rel.Person.PassportNumber, pasportNumber2, relationship.State, "manually");
+                                        }
                                     }
                                     else
                                     {
-                                        //если определили отношение, которого уже существовало - заменяем, если необходимо
-                                        var RS = resultRS.First();
-                                        if (relationship.State != RS.State)
-                                            UpdateRelationshipState(rel.Person.PassportNumber, pasportNumber2, relationship.State, "manually");
+                                        //если не определили новое отношение, но существовало старое - удаляем его
+                                        if (count != 0)
+                                            DeleteRelative(rel.Person.PassportNumber, pasportNumber2);
                                     }
-                                }
-                                else
-                                {
-                                    //если не определили новое отношение, но существовало старое - удаляем его
-                                    if (count != 0)
-                                        DeleteRelative(rel.Person.PassportNumber, pasportNumber2);
                                 }
                             }
                         }

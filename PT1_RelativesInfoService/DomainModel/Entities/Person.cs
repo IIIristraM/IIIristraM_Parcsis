@@ -37,7 +37,7 @@ namespace DomainModel.Entities
         public DateTime? DateOfBirth { get; set; }
         [Column]
         [DataMember]
-        public string Adress { get; set; }
+        public string Address { get; set; }
     }
 
     //дублирует аналогичную таблицу БД

@@ -32,6 +32,48 @@ namespace NUnit_Tests
         //режим работы для методов AddRelative и UpdateRelationshipState
         private static string mode = "auto";
 
+        //тесты для функции сервиса GetPersonInfo
+        public static void TestGetPersonInfo()
+        {
+            JsonSerializerSettings settings = new JsonSerializerSettings();
+            settings.DateFormatHandling = DateFormatHandling.MicrosoftDateFormat;
+
+            string operationUrl = "http://localhost:8732/Design_Time_Addresses/RESTService/GetPersonInfo";
+            string pasportNumber = "3610123456";
+
+            #region Create Request
+            WebRequest req = WebRequest.Create(operationUrl + "?pasportNumber=" + pasportNumber);
+            req.ContentType = "application/" + dataFormat;
+            #endregion
+
+            #region Get Response
+            WebResponse resp = req.GetResponse();
+            Stream stream = resp.GetResponseStream();
+            StreamReader sr = new StreamReader(stream);
+            Person result = new Person();
+
+            if (dataFormat == "json")
+            {
+                string s = sr.ReadToEnd();
+                Console.WriteLine(s);
+                result = JsonConvert.DeserializeObject<Person>(s, settings);
+            }
+            else
+            {
+                string s = sr.ReadToEnd();
+                Console.WriteLine(s);
+                StringReader strR = new StringReader(s);
+
+                string root = "Person";
+                XmlRootAttribute xra = new XmlRootAttribute();
+                xra.ElementName = root;
+                xra.Namespace = "http://Person";
+                result = (Person)(new XmlSerializer(result.GetType(), xra).Deserialize(strR));
+            }
+            #endregion
+
+            Assert.IsTrue(result.FirstName == "Konstantin");
+        }
         //тесты для функции сервиса GetRelativesList
         public static void TestGetRelativesList()
         {
@@ -42,7 +84,7 @@ namespace NUnit_Tests
             string operationUrl = "http://localhost:8732/Design_Time_Addresses/RESTService/GetRelativesList";
             //параметры для функции
             string pasportNumber = "3610123456";
-            Person filter = new Person { Adress = "", 
+            Person filter = new Person { Address = "", 
                                          DateOfBirth = new DateTime(), 
                                          FirstName = "Igor", 
                                          PassportNumber = "", 
@@ -71,7 +113,7 @@ namespace NUnit_Tests
             {
                 filterStr = "<GetRelativesList>" + 
                             "<filter xmlns:a=\"http://Person\">" +
-                            "<a:Adress>" + filter.Adress + "</a:Adress>" +
+                            "<a:Address>" + filter.Address + "</a:Address>" +
                             "<a:DateOfBirth>" + filter.DateOfBirth.Value.ToString("o") + "</a:DateOfBirth>" +
                             "<a:FirstName>" + filter.FirstName + "</a:FirstName>" +
                             "<a:PassportNumber>" + filter.PassportNumber + "</a:PassportNumber>" +
@@ -88,8 +130,8 @@ namespace NUnit_Tests
                 XmlElement operationEl = doc.CreateElement("GetRelativesList");
                 XmlElement filterEl = doc.CreateElement("filter");
                 filterEl.SetAttribute("xmlns:a", "http://Person");
-                XmlElement adresseEl = doc.CreateElement("a", "Adresse", "http://Person");
-                adresseEl.InnerText = filter.Adresse;
+                XmlElement AddresseEl = doc.CreateElement("a", "Addresse", "http://Person");
+                AddresseEl.InnerText = filter.Addresse;
                 XmlElement dobEl = doc.CreateElement("DateOfBirth");
                 dobEl.InnerText = filter.DateOfBirth.ToUniversalTime().ToString();
                 XmlElement firstNameEl = doc.CreateElement("a", "FirstName", "http://Person");
@@ -104,7 +146,7 @@ namespace NUnit_Tests
                 sexEl.InnerText = filter.Sex;
                 XmlElement thirdNameEl = doc.CreateElement("ThirdName");
                 thirdNameEl.InnerText = filter.ThirdName;
-                filterEl.AppendChild(adresseEl);
+                filterEl.AppendChild(AddresseEl);
                 filterEl.AppendChild(dobEl);
                 filterEl.AppendChild(firstNameEl);
                 filterEl.AppendChild(pasportNumberEl);
@@ -168,7 +210,7 @@ namespace NUnit_Tests
             string pasportNumber = "3610123456";
             Person person = new Person
             {
-                Adress = "",
+                Address = "",
                 DateOfBirth = null,
                 FirstName = "Julia",
                 PassportNumber = "3610112233",
@@ -296,7 +338,7 @@ namespace NUnit_Tests
             string relPasportNumber = "3215654321";
             Person updatedRelative = new Person
             {
-                Adress = "",
+                Address = "",
                 DateOfBirth = null,
                 FirstName = "Vasily",
                 PassportNumber = "",
@@ -432,6 +474,14 @@ namespace NUnit_Tests
                 persones = context.CreateRepository<Person>("PT1_DB");
                 relationships = context.CreateRepository<Relationship>("PT1_DB");
             }
+            Console.WriteLine("Start TestGetPersonInfo");
+            Console.WriteLine("XML");
+            dataFormat = "xml";
+            TestGetPersonInfo();
+            Console.WriteLine("JSON");
+            dataFormat = "json";
+            TestGetPersonInfo();
+            Console.WriteLine();
             Console.WriteLine("Start TestGetRelativesList");
             Console.WriteLine("XML");
             dataFormat = "xml";

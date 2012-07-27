@@ -13,6 +13,19 @@ namespace RelativesInfoService.Contracts
     [ServiceContract(Namespace="")]
     public interface IRelativesInfoService
     {
+        /// <summary>
+        /// получение информации о человек по номеру паспорта
+        /// запрос должен осуществлятся методом GET
+        /// параметры:
+        /// pasportNumber - номер паспорта персоны, информацию о которой хочет получить клиент
+        /// передается в Url
+        /// </summary>
+        /// <param name="pasportNumber"></param>
+        /// <returns></returns>
+        [OperationContract]
+        [WebGet(UriTemplate = "/GetPersonInfo/?pasportNumber={pasportNumber}")]
+        Person GetPersonInfo(string pasportNumber);
+
         //получение списка родственников персоны в формате: <детализация по родственнику, тип родственного отношения>
         //запрос должен осуществлятся методом POST
         //параметры:
