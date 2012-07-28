@@ -39,10 +39,10 @@ namespace NUnit_Tests
             settings.DateFormatHandling = DateFormatHandling.MicrosoftDateFormat;
 
             string operationUrl = "http://localhost:8732/Design_Time_Addresses/RESTService/GetPersonInfo";
-            string pasportNumber = "3610123456";
+            string passportNumber = "3610123456";
 
             #region Create Request
-            WebRequest req = WebRequest.Create(operationUrl + "?pasportNumber=" + pasportNumber);
+            WebRequest req = WebRequest.Create(operationUrl + "?passportNumber=" + passportNumber);
             req.ContentType = "application/" + dataFormat;
             #endregion
 
@@ -83,7 +83,7 @@ namespace NUnit_Tests
             //адресс функции сервиса
             string operationUrl = "http://localhost:8732/Design_Time_Addresses/RESTService/GetRelativesList";
             //параметры для функции
-            string pasportNumber = "3610123456";
+            string passportNumber = "3610123456";
             Person filter = new Person { Address = "", 
                                          DateOfBirth = new DateTime(), 
                                          FirstName = "Igor", 
@@ -96,7 +96,7 @@ namespace NUnit_Tests
             //создание и отправка запроса сервису
             #region Send Request
             //описание Url запроса
-            WebRequest req = WebRequest.Create(operationUrl + "?pasportNumber=" + pasportNumber);
+            WebRequest req = WebRequest.Create(operationUrl + "?passportNumber=" + passportNumber);
             //описание метода запрса
             req.Method = "POST";
             req.Timeout = 12000;
@@ -207,7 +207,7 @@ namespace NUnit_Tests
             settings.DateFormatHandling = DateFormatHandling.MicrosoftDateFormat;
 
             string operationUrl = "http://localhost:8732/Design_Time_Addresses/RESTService/AddRelative";
-            string pasportNumber = "3610123456";
+            string passportNumber = "3610123456";
             Person person = new Person
             {
                 Address = "",
@@ -240,7 +240,7 @@ namespace NUnit_Tests
             while (i < 2)
             {
                 #region Create Request
-                req = WebRequest.Create(operationUrl + "/" + pasportNumber + "/" + mode);
+                req = WebRequest.Create(operationUrl + "?passportNumber=" + passportNumber + "&mode=" + mode);
                 req.Method = "POST";
                 req.Timeout = 12000;
                 req.ContentType = "application/" + dataFormat;
@@ -283,8 +283,8 @@ namespace NUnit_Tests
             settings.DateFormatHandling = DateFormatHandling.MicrosoftDateFormat;
 
             string operationUrl = "http://localhost:8732/Design_Time_Addresses/RESTService/DeleteRelative";
-            string pasportNumber = "3610123456";
-            string relPasportNumber = "3610112233";
+            string passportNumber = "3610123456";
+            string relPassportNumber = "3610112233";
 
             int i = 0;
             int[] personesCount = new int[2];
@@ -296,7 +296,7 @@ namespace NUnit_Tests
             while (i < 2)
             {
                 #region Create Request
-                req = WebRequest.Create(operationUrl + "/" + pasportNumber + "/" + relPasportNumber);
+                req = WebRequest.Create(operationUrl + "?passportNumber=" + passportNumber + "&relPassportNumber=" + relPassportNumber);
                 req.ContentType = "application/" + dataFormat;
                 #endregion
 
@@ -334,8 +334,8 @@ namespace NUnit_Tests
             settings.DateFormatHandling = DateFormatHandling.MicrosoftDateFormat;
 
             string operationUrl = "http://localhost:8732/Design_Time_Addresses/RESTService/UpdateRelative";
-            string pasportNumber = "3610123456";
-            string relPasportNumber = "3215654321";
+            string passportNumber = "3610123456";
+            string relPassportNumber = "3215654321";
             Person updatedRelative = new Person
             {
                 Address = "",
@@ -365,7 +365,7 @@ namespace NUnit_Tests
                 #endregion
 
                 #region Create Request
-                req = WebRequest.Create(operationUrl + "/" + pasportNumber + "/" + relPasportNumber);
+                req = WebRequest.Create(operationUrl + "?passportNumber=" + passportNumber + "&relPassportNumber=" + relPassportNumber);
                 req.Method = "POST";
                 req.Timeout = 12000;
                 req.ContentType = "application/" + dataFormat;
@@ -389,7 +389,7 @@ namespace NUnit_Tests
 
                 Assert.IsTrue(result == 1);
 
-                var sql = from p in persones.GetContent() where p.PassportNumber == relPasportNumber select p.FirstName;
+                var sql = from p in persones.GetContent() where p.PassportNumber == relPassportNumber select p.FirstName;
                 Console.WriteLine(sql.First());
                 Console.WriteLine(updatedRelative.FirstName);
                 Assert.IsTrue(sql.First() == updatedRelative.FirstName);
@@ -405,8 +405,8 @@ namespace NUnit_Tests
             settings.DateFormatHandling = DateFormatHandling.MicrosoftDateFormat;
 
             string operationUrl = "http://localhost:8732/Design_Time_Addresses/RESTService/UpdateRelationshipState";
-            string pasportNumber = "3610123456";
-            string relPasportNumber = "3610112233";
+            string passportNumber = "3610123456";
+            string relPassportNumber = "3610112233";
 
             string updatedState = "aunt";
 
@@ -422,7 +422,7 @@ namespace NUnit_Tests
                 if (i > 0) updatedState = "sister";
 
                 #region Create Request
-                req = WebRequest.Create(operationUrl + "/" + pasportNumber + "/" + relPasportNumber + "/" + updatedState + "/" + mode);
+                req = WebRequest.Create(operationUrl + "?passportNumber1=" + passportNumber + "&passportNumber2=" + relPassportNumber + "&updatedState=" + updatedState + "&mode=" + mode);
                 req.ContentType = "application/" + dataFormat;
                 #endregion
 
@@ -443,7 +443,7 @@ namespace NUnit_Tests
 
                 var sql = from r in relationships.GetContent()
                           from p in persones.GetContent()
-                          where ((p.PassportNumber == relPasportNumber) &&
+                          where ((p.PassportNumber == relPassportNumber) &&
                                 ((p.PersonID == r.FirstPersonID) || (p.PersonID == r.SecondPersonID)))
                           select r.State;
 

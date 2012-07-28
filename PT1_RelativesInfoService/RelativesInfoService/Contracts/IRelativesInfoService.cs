@@ -23,8 +23,8 @@ namespace RelativesInfoService.Contracts
         /// <param name="pasportNumber"></param>
         /// <returns></returns>
         [OperationContract]
-        [WebGet(UriTemplate = "/GetPersonInfo/?pasportNumber={pasportNumber}")]
-        Person GetPersonInfo(string pasportNumber);
+        [WebGet(UriTemplate = "/GetPersonInfo?passportNumber={passportNumber}")]
+        Person GetPersonInfo(string passportNumber);
 
         //получение списка родственников персоны в формате: <детализация по родственнику, тип родственного отношения>
         //запрос должен осуществлятся методом POST
@@ -34,8 +34,8 @@ namespace RelativesInfoService.Contracts
         //filter - набор значений для фильтрации списка по любой комбинации полей таблицы Persones
         //передается в теле запроса
         [OperationContract]
-        [WebInvoke(Method = "POST", UriTemplate = "/GetRelativesList?pasportNumber={pasportNumber}", BodyStyle = WebMessageBodyStyle.WrappedRequest)]
-        List<Relative> GetRelativesList(string pasportNumber, Person filter);
+        [WebInvoke(Method = "POST", UriTemplate = "/GetRelativesList?passportNumber={passportNumber}", BodyStyle = WebMessageBodyStyle.WrappedRequest)]
+        List<Relative> GetRelativesList(string passportNumber, Person filter);
 
 
         //добавление родственника персоне
@@ -55,8 +55,8 @@ namespace RelativesInfoService.Contracts
         //1 - операция успешно завершилась
         //0 - операцию не удалось произвести
         [OperationContract]
-        [WebInvoke(Method = "POST", UriTemplate = "/AddRelative/{pasportNumber}/{mode}", BodyStyle = WebMessageBodyStyle.WrappedRequest)]
-        int AddRelative(string pasportNumber, Relative relative, string mode);
+        [WebInvoke(Method = "POST", UriTemplate = "/AddRelative?passportNumber={passportNumber}&mode={mode}", BodyStyle = WebMessageBodyStyle.WrappedRequest)]
+        int AddRelative(string passportNumber, Relative relative, string mode);
 
         //удаление родственного отношения между двумя персонами
         //запрос должен осуществлятся методом GET
@@ -68,8 +68,8 @@ namespace RelativesInfoService.Contracts
         //1 - операция успешно завершилась
         //0 - операцию не удалось произвести
         [OperationContract]
-        [WebGet(UriTemplate = "/DeleteRelative/{pasportNumber}/{relPasportNumber}")]
-        int DeleteRelative(string pasportNumber, string relPasportNumber);
+        [WebGet(UriTemplate = "/DeleteRelative?passportNumber={passportNumber}&relPassportNumber={relPassportNumber}")]
+        int DeleteRelative(string passportNumber, string relPassportNumber);
 
         //редактирование данных о родственнике
         //запрос должен осуществлятся методом POST
@@ -84,8 +84,8 @@ namespace RelativesInfoService.Contracts
         //1 - операция успешно завершилась
         //0 - операцию не удалось произвести
         [OperationContract]
-        [WebInvoke(Method = "POST", UriTemplate = "/UpdateRelative/{pasportNumber}/{relPasportNumber}", BodyStyle = WebMessageBodyStyle.WrappedRequest)]
-        int UpdateRelative(string pasportNumber, string relPasportNumber, Person updatedRelative);
+        [WebInvoke(Method = "POST", UriTemplate = "/UpdateRelative?passportNumber={passportNumber}&relPassportNumber={relPassportNumber}", BodyStyle = WebMessageBodyStyle.WrappedRequest)]
+        int UpdateRelative(string passportNumber, string relPassportNumber, Person updatedRelative);
 
         //редактирование родственных отношений
         //запрос должен осуществлятся методом GET
@@ -110,8 +110,8 @@ namespace RelativesInfoService.Contracts
         //1 - операция успешно завершилась
         //0 - операцию не удалось произвести
         [OperationContract]
-        [WebGet(UriTemplate = "/UpdateRelationshipState/{pasportNumber1}/{pasportNumber2}/{updatedState}/{mode}")]
-        int UpdateRelationshipState(string pasportNumber1, string pasportNumber2, string updatedState, string mode);
+        [WebGet(UriTemplate = "/UpdateRelationshipState?passportNumber1={passportNumber1}&passportNumber2={passportNumber2}&updatedState={updatedState}&mode={mode}")]
+        int UpdateRelationshipState(string passportNumber1, string passportNumber2, string updatedState, string mode);
 
     }
 }
