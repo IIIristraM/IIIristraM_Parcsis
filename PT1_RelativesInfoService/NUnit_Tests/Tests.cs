@@ -12,69 +12,45 @@ using DomainModel.Entities;
 using System.Xml.Serialization;
 using System.Xml;
 using System.Threading;
+using System.ServiceModel;
+using RISI = RelativesInfoService.Implementations;
 
 namespace NUnit_Tests
 {
-    //тесты сервиса для NUnit
+    /// <summary>
+    /// тесты сервиса для NUnit
+    /// </summary>
     [TestFixture]
     public class Tests
     {
-        //строка соединения с БД
+        /// <summary>
+        /// строка соединения с БД
+        /// </summary>
         private static string conStr = @"Server =.\SQLEXPRESS; Database = PT1_DB; Trusted_Connection = yes;";
-        //экземпляр контекста
-        private static AbstractContextDB context;
-        //экземпляр таблицы Persones
+        /// <summary>
+        /// экземпляр контекста
+        /// </summary>
+        private static IContextDB context;
+        /// <summary>
+        /// экземпляр таблицы Persones
+        /// </summary>
         private static IRepository<Person> persones;
-        //экземпляр таблицы Relationships
+        /// <summary>
+        /// экземпляр таблицы Relationships
+        /// </summary>
         private static IRepository<Relationship> relationships;
-        //формат отправляемых сервису и возвращаемых сервисом данных
+        /// <summary>
+        /// формат отправляемых сервису и возвращаемых сервисом данных
+        /// </summary>
         private static string dataFormat = "json";
-        //режим работы для методов AddRelative и UpdateRelationshipState
+        /// <summary>
+        /// режим работы для методов AddRelative и UpdateRelationshipState
+        /// </summary>
         private static string mode = "auto";
 
-        //тесты для функции сервиса GetPersonInfo
-        public static void TestGetPersonInfo()
-        {
-            JsonSerializerSettings settings = new JsonSerializerSettings();
-            settings.DateFormatHandling = DateFormatHandling.MicrosoftDateFormat;
-
-            string operationUrl = "http://localhost:8732/Design_Time_Addresses/RESTService/GetPersonInfo";
-            string passportNumber = "3610123456";
-
-            #region Create Request
-            WebRequest req = WebRequest.Create(operationUrl + "?passportNumber=" + passportNumber);
-            req.ContentType = "application/" + dataFormat;
-            #endregion
-
-            #region Get Response
-            WebResponse resp = req.GetResponse();
-            Stream stream = resp.GetResponseStream();
-            StreamReader sr = new StreamReader(stream);
-            Person result = new Person();
-
-            if (dataFormat == "json")
-            {
-                string s = sr.ReadToEnd();
-                Console.WriteLine(s);
-                result = JsonConvert.DeserializeObject<Person>(s, settings);
-            }
-            else
-            {
-                string s = sr.ReadToEnd();
-                Console.WriteLine(s);
-                StringReader strR = new StringReader(s);
-
-                string root = "Person";
-                XmlRootAttribute xra = new XmlRootAttribute();
-                xra.ElementName = root;
-                xra.Namespace = "http://Person";
-                result = (Person)(new XmlSerializer(result.GetType(), xra).Deserialize(strR));
-            }
-            #endregion
-
-            Assert.IsTrue(result.FirstName == "Konstantin");
-        }
-        //тесты для функции сервиса GetRelativesList
+        /// <summary>
+        /// тесты для функции сервиса GetRelativesList
+        /// </summary>
         public static void TestGetRelativesList()
         {
             //настройка сериализации типа DateTime в JSON
@@ -199,7 +175,53 @@ namespace NUnit_Tests
             Assert.IsTrue(result.Count == 1);
             Assert.IsTrue(result.First().RelationshipState == "father");
         }
-        //тесты для функции сервиса AddRelative
+        /// <summary>
+        /// тесты для функции сервиса GetPersonInfo
+        /// </summary>
+        public static void TestGetPersonInfo()
+        {
+            JsonSerializerSettings settings = new JsonSerializerSettings();
+            settings.DateFormatHandling = DateFormatHandling.MicrosoftDateFormat;
+
+            string operationUrl = "http://localhost:8732/Design_Time_Addresses/RESTService/GetPersonInfo";
+            string passportNumber = "3610123456";
+
+            #region Create Request
+            WebRequest req = WebRequest.Create(operationUrl + "?passportNumber=" + passportNumber);
+            req.ContentType = "application/" + dataFormat;
+            #endregion
+
+            #region Get Response
+            WebResponse resp = req.GetResponse();
+            Stream stream = resp.GetResponseStream();
+            StreamReader sr = new StreamReader(stream);
+            Person result = new Person();
+
+            if (dataFormat == "json")
+            {
+                string s = sr.ReadToEnd();
+                Console.WriteLine(s);
+                result = JsonConvert.DeserializeObject<Person>(s, settings);
+            }
+            else
+            {
+                string s = sr.ReadToEnd();
+                Console.WriteLine(s);
+                StringReader strR = new StringReader(s);
+
+                string root = "Person";
+                XmlRootAttribute xra = new XmlRootAttribute();
+                xra.ElementName = root;
+                xra.Namespace = "http://Person";
+                result = (Person)(new XmlSerializer(result.GetType(), xra).Deserialize(strR));
+            }
+            #endregion
+
+            Assert.IsTrue(result.FirstName == "Konstantin");
+        }
+        /// <summary>
+        /// тесты для функции сервиса AddRelative
+        /// </summary>
         public static void TestAddRelative()
         {
             dataFormat = "json";
@@ -275,7 +297,9 @@ namespace NUnit_Tests
             Assert.IsTrue(personesCount[0] == personesCount[1]);
             Assert.IsTrue(relationshipCount[0] == relationshipCount[1]);
         }
-        //тесты для функции сервиса DeleteRelative
+        /// <summary>
+        /// тесты для функции сервиса DeleteRelative
+        /// </summary>
         public static void TestDeleteRelative()
         {
             dataFormat = "json";
@@ -326,7 +350,9 @@ namespace NUnit_Tests
             Assert.IsTrue(relationshipCount[0] == relationshipCount[1]);
 
         }
-        //тесты для функции сервиса UpdateRelative
+        /// <summary>
+        /// тесты для функции сервиса UpdateRelative
+        /// </summary>
         public static void TestUpdateRelative()
         {
             dataFormat = "json";
@@ -397,7 +423,9 @@ namespace NUnit_Tests
                 i++;
             }
         }
-        //тесты для функции сервиса UpdateRelationshipState
+        /// <summary>
+        /// тесты для функции сервиса UpdateRelationshipState
+        /// </summary>
         public static void TestUpdateRelationshipState()
         {
             dataFormat = "json";
@@ -462,17 +490,21 @@ namespace NUnit_Tests
 
 
         }
-
-        //управление порядком тестирования
+        /// <summary>
+        /// управление порядком тестирования
+        /// </summary>
         [Test]
-        public static void GlobalTest()
+        public static void ServiceTest()
         {
+            ServiceHost host = new ServiceHost(typeof(RISI.RelativesInfoService<ContextDB>));
+            host.Open();
+            Console.WriteLine("Service ready...");
             if (context == null)
             {
                 context = new ContextDB();
-                context.AddContext("PT1_DB", conStr);
-                persones = context.CreateRepository<Person>("PT1_DB");
-                relationships = context.CreateRepository<Relationship>("PT1_DB");
+                context.CreateContext(conStr);
+                persones = context.CreateRepository<Person>();
+                relationships = context.CreateRepository<Relationship>();
             }
             Console.WriteLine("Start TestGetPersonInfo");
             Console.WriteLine("XML");
@@ -501,6 +533,7 @@ namespace NUnit_Tests
             Console.WriteLine();
             Console.WriteLine("Start TestDeleteRelative");
             TestDeleteRelative();
+            host.Close();
         }
     }
 }

@@ -22,3 +22,6 @@ C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService
 C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\NUnit_Tests\obj\Debug\ResolveAssemblyReference.cache
 C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\NUnit_Tests\obj\Debug\NUnit_Tests.dll
 C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\NUnit_Tests\obj\Debug\NUnit_Tests.pdb
+C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\NUnit_Tests\bin\Debug\RelativesInfoService.dll
+C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\NUnit_Tests\bin\Debug\RelativesInfoService.pdb
+C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\NUnit_Tests\bin\Debug\NUnit_Tests.dll.config

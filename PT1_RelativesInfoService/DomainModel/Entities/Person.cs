@@ -9,7 +9,9 @@ using System.Runtime.Serialization;
 //отражает основные сущности предметной области
 namespace DomainModel.Entities
 {
-    //дублирует аналогичную таблицу БД
+    /// <summary>
+    /// дублирует аналогичную таблицу БД
+    /// </summary>
     [Table(Name = "Persones")]
     [DataContract(Namespace = "http://Person")]
     public class Person
@@ -40,7 +42,9 @@ namespace DomainModel.Entities
         public string Address { get; set; }
     }
 
-    //дублирует аналогичную таблицу БД
+    /// <summary>
+    /// дублирует аналогичную таблицу БД
+    /// </summary>
     [Table(Name = "Relationships")]
     [DataContract]
     public class Relationship
@@ -59,14 +63,21 @@ namespace DomainModel.Entities
         public string State { get; set; }
     }
 
-    //вспомогательный класс, позволяет более понятно и удобно написать функционал
+    
+    /// <summary>
+    /// вспомогательный класс, позволяет более понятно и удобно написать функционал
+    /// </summary>
     [DataContract]
     public class Relative
     {
-        //детализация по персоне родственника
+        /// <summary>
+        /// детализация по персоне родственника
+        /// </summary>
         [DataMember]
         public Person Person { get; set; }
-        //тип родственной связи
+        /// <summary>
+        /// тип родственной связи
+        /// </summary>
         [DataMember]
         public string RelationshipState { get; set; }
 

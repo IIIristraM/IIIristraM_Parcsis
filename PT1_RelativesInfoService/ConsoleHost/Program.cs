@@ -6,10 +6,12 @@ using System.ServiceModel;
 using RISI = RelativesInfoService.Implementations;
 using DomainModel.Concrete;
 
-//хостинг сервиса
-//при отладке проект должен быть установлен как StartUp
 namespace ConsoleHost
 {
+    /// <summary>
+    ///хостинг сервиса
+    ///при отладке проект должен быть установлен как StartUp
+    /// </summary>
     class Program
     {
         static void Main(string[] args)

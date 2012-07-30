@@ -10,14 +10,16 @@ using System.ServiceModel.Activation;
 using System.Data.Linq;
 using System.Configuration;
 
-//реализация контракта сервиса
 namespace RelativesInfoService.Implementations
 {
-    //[AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed)]
-    public class RelativesInfoService<TContext> : IRelativesInfoService where TContext: AbstractContextDB, new() 
+    /// <summary>
+    /// реализация контракта сервиса
+    /// </summary>
+    /// <typeparam name="TContext"></typeparam>
+    public class RelativesInfoService<TContext> : IRelativesInfoService where TContext: IContextDB, new() 
     {
         public string ConStr { get; set; }
-        public AbstractContextDB Context { get; set; }
+        public IContextDB Context { get; set; }
         public IRepository<Person> Persones { get; set; }
         public IRepository<Relationship> Relationships { get; set; }
 
@@ -26,9 +28,9 @@ namespace RelativesInfoService.Implementations
             //устанавливается соеденение с БД
             ConStr = ConfigurationManager.ConnectionStrings["PT1_DB"].ConnectionString;
             Context = new TContext();
-            Context.AddContext("PT1_DB", ConStr);
-            Persones = Context.CreateRepository<Person>("PT1_DB");
-            Relationships = Context.CreateRepository<Relationship>("PT1_DB");
+            Context.CreateContext(ConStr);
+            Persones = Context.CreateRepository<Person>();
+            Relationships = Context.CreateRepository<Relationship>();
         }
 
         public Person GetPersonInfo(string passportNumber)
