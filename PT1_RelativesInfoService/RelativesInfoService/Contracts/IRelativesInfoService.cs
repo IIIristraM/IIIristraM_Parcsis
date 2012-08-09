@@ -69,7 +69,7 @@ namespace RelativesInfoService.Contracts
         /// <returns></returns>
         [OperationContract]
         [WebInvoke(Method = "POST", UriTemplate = "/AddRelative?passportNumber={passportNumber}&mode={mode}", BodyStyle = WebMessageBodyStyle.WrappedRequest)]
-        int AddRelative(string passportNumber, Relative relative, string mode);
+        string AddRelative(string passportNumber, Relative relative, string mode);
 
         /// <summary>
         ///удаление родственного отношения между двумя персонами
@@ -87,7 +87,7 @@ namespace RelativesInfoService.Contracts
         /// <returns></returns>
         [OperationContract]
         [WebGet(UriTemplate = "/DeleteRelative?passportNumber={passportNumber}&relPassportNumber={relPassportNumber}")]
-        int DeleteRelative(string passportNumber, string relPassportNumber);
+        string DeleteRelative(string passportNumber, string relPassportNumber);
 
         /// <summary>
         ///редактирование данных о родственнике
@@ -109,7 +109,7 @@ namespace RelativesInfoService.Contracts
         /// <returns></returns>
         [OperationContract]
         [WebInvoke(Method = "POST", UriTemplate = "/UpdateRelative?passportNumber={passportNumber}&relPassportNumber={relPassportNumber}", BodyStyle = WebMessageBodyStyle.WrappedRequest)]
-        int UpdateRelative(string passportNumber, string relPassportNumber, Person updatedRelative);
+        string UpdateRelative(string passportNumber, string relPassportNumber, Person updatedRelative);
 
         /// <summary>
         ///редактирование родственных отношений
@@ -142,7 +142,7 @@ namespace RelativesInfoService.Contracts
         /// <returns></returns>
         [OperationContract]
         [WebGet(UriTemplate = "/UpdateRelationshipState?passportNumber1={passportNumber1}&passportNumber2={passportNumber2}&updatedState={updatedState}&mode={mode}")]
-        int UpdateRelationshipState(string passportNumber1, string passportNumber2, string updatedState, string mode);
+        string UpdateRelationshipState(string passportNumber1, string passportNumber2, string updatedState, string mode);
 
     }
 }

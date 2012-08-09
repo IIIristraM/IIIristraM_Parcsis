@@ -158,17 +158,17 @@ namespace RelativesInfoService.Implementations
             return list;
         }
 
-        public int AddRelative(string pasportNumber, Relative relative, string mode)
+        public string AddRelative(string pasportNumber, Relative relative, string mode)
         {
-            int code = 1;
+            string message = "relative added successfully";
             int personID = 0;
             int relativeID = 0;
             Relationship relationship;
             try
             {
                 //проверяем есть ли уже родственник в таблице Persones, если нет - добавляем
-                var result = from p in Persones.GetContent() where p.PassportNumber == relative.Person.PassportNumber select p.PersonID;
-                if (result.Count() == 0)
+                var tryRelative = from p in Persones.GetContent() where p.PassportNumber == relative.Person.PassportNumber select p.PersonID;
+                if (tryRelative.Count() == 0)
                 {
                     if ((relative.Person.DateOfBirth != null)&&(relative.Person.DateOfBirth.Value.Year < 1900)) relative.Person.DateOfBirth = null;
                     Persones.Insert(relative.Person);
@@ -177,9 +177,11 @@ namespace RelativesInfoService.Implementations
                 }
                 else
                 {
-                    relativeID = result.First();
+                    relativeID = tryRelative.First();
                 }
-                personID = (from p in Persones.GetContent() where p.PassportNumber == pasportNumber select p.PersonID).First();
+                var tryPerson = (from p in Persones.GetContent() where p.PassportNumber == pasportNumber select p).FirstOrDefault();
+                if (tryPerson != null) { personID = tryPerson.PersonID; }
+                else { return "there's no person in DB with passport number " + pasportNumber; }
                 //запрашиваем список родственников персоны
                 List<Relative> relatives = GetRelativesList(pasportNumber, null);
                 //проверяем существует ли уже между персоной и родственником отношение, если нет - создаем
@@ -196,10 +198,10 @@ namespace RelativesInfoService.Implementations
                         string newState = "";
                         //проверяем есть ли в базе отношение между добавленным родственником и существующим, если нет - 
                         //пытаемся определить тип отношения и добавить
-                        result = from r in Relationships.GetContent()
-                                 where (((r.FirstPersonID == relativeID) && (r.SecondPersonID == rel.Person.PersonID)) ||
-                                       ((r.FirstPersonID == rel.Person.PersonID) && (r.SecondPersonID == relativeID)))
-                                 select r.RelationshipID;
+                        var result = from r in Relationships.GetContent()
+                                     where (((r.FirstPersonID == relativeID) && (r.SecondPersonID == rel.Person.PersonID)) ||
+                                           ((r.FirstPersonID == rel.Person.PersonID) && (r.SecondPersonID == relativeID)))
+                                     select r.RelationshipID;
                         if ((result.Count() == 0)&&(relativeID != rel.Person.PersonID))
                         {
                             switch (relative.RelationshipState)
@@ -430,14 +432,14 @@ namespace RelativesInfoService.Implementations
             }
             catch (Exception e)
             {
-                code = 0;
+                message = e.Message;
             }
-            return code; 
+            return message; 
         }
 
-        public int DeleteRelative(string passportNumber, string relPassportNumber) 
+        public string DeleteRelative(string passportNumber, string relPassportNumber) 
         {
-            int code = 1;
+            string message = "relative deleted successfully";
             try
             {
                 //ищем и удаляем запись, если запись не существует, функция вернет - 0
@@ -454,14 +456,14 @@ namespace RelativesInfoService.Implementations
             }
             catch (Exception e)
             {
-                code = 0;
+                message = e.Message;
             }
-            return code; 
+            return message; 
         }
 
-        public int UpdateRelative(string passportNumber, string relPassportNumber, Person updatedRelative)
+        public string UpdateRelative(string passportNumber, string relPassportNumber, Person updatedRelative)
         { 
-            int code = 1;
+            string message = "relative updated successfully";
             try
             {
                 //ищем родственника в БД
@@ -474,7 +476,7 @@ namespace RelativesInfoService.Implementations
                                         ((r.FirstPersonID == p1.PersonID) && (r.SecondPersonID == p2.PersonID))))
                              select p2;
                 //если нашли, обновляем
-                if (result.Count() == 1)
+                if (result.Count() != 0)
                 {
                     var r = result.First();
                     if (updatedRelative.Address != "") r.Address = updatedRelative.Address;
@@ -488,19 +490,19 @@ namespace RelativesInfoService.Implementations
                 }
                 else
                 {
-                    throw new Exception("relative doesn't exist or has duplicates"); 
+                    message = "relationship between " + passportNumber + " and " + relPassportNumber + " doesn't exist"; 
                 }
             }
             catch (Exception e)
             {
-                code = 0;
+                message = e.Message;
             }
-            return code; 
+            return message; 
         }
 
-        public int UpdateRelationshipState(string passportNumber1, string passportNumber2, string updatedState, string mode)
+        public string UpdateRelationshipState(string passportNumber1, string passportNumber2, string updatedState, string mode)
         { 
-            int code = 1;
+            string message = "relationship updated successfully";
             try
             {
                 //ищем отношение в БД
@@ -513,7 +515,7 @@ namespace RelativesInfoService.Implementations
                                     ((r.FirstPersonID == p1.PersonID) && (r.SecondPersonID == p2.PersonID))))
                              select new { r, p1, p2.PersonID };
                 //если нашли - обновляем
-                if (result.Count() == 1)
+                if (result.Count() != 0)
                 {
                     var r = result.First();
                     int relativeID = r.PersonID; 
@@ -832,14 +834,14 @@ namespace RelativesInfoService.Implementations
                 }
                 else
                 {
-                  throw new Exception("relationship doesn't exist or has duplicates");
+                    message = "relationship between " + passportNumber1 + " and " + passportNumber2 + " doesn't exist"; 
                 }
             }
             catch (Exception e)
             {
-                code = 0;
+                message = e.Message;
             }
-            return code; 
+            return message; 
         }
 
     }

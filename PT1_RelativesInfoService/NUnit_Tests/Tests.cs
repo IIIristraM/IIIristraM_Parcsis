@@ -281,11 +281,11 @@ namespace NUnit_Tests
                 stream = resp.GetResponseStream();
                 sr = new System.IO.StreamReader(stream);
                 string s = sr.ReadToEnd();
-                int result = Int32.Parse(s);
+                Console.WriteLine(s);
+                //Console.WriteLine(s.Length);
                 #endregion
 
-                Assert.IsTrue(result == 1);
-                Console.WriteLine(result);
+                Assert.IsTrue(s == "\"relative added successfully\"");
 
                 var sqlP = from p in persones.GetContent() select p.PersonID;
                 var sqlR = from r in relationships.GetContent() select r.RelationshipID;
@@ -334,10 +334,9 @@ namespace NUnit_Tests
                 sr = new System.IO.StreamReader(stream);
                 string s = sr.ReadToEnd();
                 Console.WriteLine(s);
-                int result = Int32.Parse(s);
                 #endregion
 
-                if (i == 0) { Assert.IsTrue(result == 1); } else { Assert.IsTrue(result == 0); }
+                if (i == 0) { Assert.IsTrue(s == "\"relative deleted successfully\""); } else { Assert.IsTrue(s != "relative deleted successfully"); }
 
                 var sqlP = from p in persones.GetContent() select p.PersonID;
                 var sqlR = from r in relationships.GetContent() select r.RelationshipID;
@@ -410,10 +409,10 @@ namespace NUnit_Tests
                 stream = resp.GetResponseStream();
                 sr = new StreamReader(stream);
                 string s = sr.ReadToEnd();
-                int result = Int32.Parse(s);
+                Console.WriteLine(s);
                 #endregion
 
-                Assert.IsTrue(result == 1);
+                Assert.IsTrue(s == "\"relative updated successfully\"");
 
                 var sql = from p in persones.GetContent() where p.PassportNumber == relPassportNumber select p.FirstName;
                 Console.WriteLine(sql.First());
@@ -464,10 +463,9 @@ namespace NUnit_Tests
                 sr = new System.IO.StreamReader(stream);
                 string s = sr.ReadToEnd();
                 Console.WriteLine(s);
-                int result = Int32.Parse(s);
                 #endregion
 
-                Assert.IsTrue(result == 1);
+                Assert.IsTrue(s == "\"relationship updated successfully\"");
 
                 var sql = from r in relationships.GetContent()
                           from p in persones.GetContent()
@@ -497,7 +495,11 @@ namespace NUnit_Tests
         public static void ServiceTest()
         {
             ServiceHost host = new ServiceHost(typeof(RISI.RelativesInfoService<ContextDB>));
-            host.Open();
+            //try
+            //{
+                if(host.State != CommunicationState.Opened) host.Open();
+            //}
+            //catch { }
             Console.WriteLine("Service ready...");
             if (context == null)
             {
