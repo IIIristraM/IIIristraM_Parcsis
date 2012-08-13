@@ -14,6 +14,7 @@ using System.Xml;
 using System.Threading;
 using System.ServiceModel;
 using RISI = RelativesInfoService.Implementations;
+using ConsoleHost;
 
 namespace NUnit_Tests
 {
@@ -494,20 +495,20 @@ namespace NUnit_Tests
         [Test]
         public static void ServiceTest()
         {
-            ServiceHost host = new ServiceHost(typeof(RISI.RelativesInfoService<ContextDB>));
+            if (context == null)
+            {
+                context = new ContextDB(conStr);
+                persones = context.CreateRepository<Person>();
+                relationships = context.CreateRepository<Relationship>();
+            }
+
+            ServiceHostForRIS host = new ServiceHostForRIS(typeof(RISI.RelativesInfoService), context);
             //try
             //{
                 if(host.State != CommunicationState.Opened) host.Open();
             //}
             //catch { }
             Console.WriteLine("Service ready...");
-            if (context == null)
-            {
-                context = new ContextDB();
-                context.CreateContext(conStr);
-                persones = context.CreateRepository<Person>();
-                relationships = context.CreateRepository<Relationship>();
-            }
             Console.WriteLine("Start TestGetPersonInfo");
             Console.WriteLine("XML");
             dataFormat = "xml";

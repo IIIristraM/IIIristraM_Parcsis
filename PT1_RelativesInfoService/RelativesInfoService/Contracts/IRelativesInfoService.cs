@@ -5,6 +5,7 @@ using System.Text;
 using System.ServiceModel;
 using DomainModel.Entities;
 using System.ServiceModel.Web;
+using RelativesInfoService.Infrostructure;
 
 namespace RelativesInfoService.Contracts
 {

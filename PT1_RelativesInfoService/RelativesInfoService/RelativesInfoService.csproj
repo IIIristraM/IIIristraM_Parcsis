@@ -49,6 +49,8 @@
   <ItemGroup>
     <Compile Include="Contracts\IRelativesInfoService.cs" />
     <Compile Include="Implementations\RelativesInfoService.cs" />
+    <Compile Include="Infrostructure\InstanceProviderForRIS.cs" />
+    <Compile Include="Infrostructure\ServiceBehaviorForRIS.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

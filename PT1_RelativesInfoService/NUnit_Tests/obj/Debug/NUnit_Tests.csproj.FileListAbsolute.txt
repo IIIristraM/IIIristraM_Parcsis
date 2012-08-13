@@ -25,3 +25,5 @@ C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService
 C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\NUnit_Tests\bin\Debug\RelativesInfoService.dll
 C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\NUnit_Tests\bin\Debug\RelativesInfoService.pdb
 C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\NUnit_Tests\bin\Debug\NUnit_Tests.dll.config
+C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\NUnit_Tests\bin\Debug\ConsoleHost.exe
+C:\Users\IIIristraM\Documents\GitHub\IIIristraM_Parcsis\PT1_RelativesInfoService\NUnit_Tests\bin\Debug\ConsoleHost.pdb

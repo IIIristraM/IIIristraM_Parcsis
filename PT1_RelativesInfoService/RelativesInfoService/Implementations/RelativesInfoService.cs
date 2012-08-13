@@ -8,7 +8,7 @@ using DomainModel.Concrete;
 using DomainModel.Abstract;
 using System.ServiceModel.Activation;
 using System.Data.Linq;
-using System.Configuration;
+using RelativesInfoService.Infrostructure;
 
 namespace RelativesInfoService.Implementations
 {
@@ -16,19 +16,15 @@ namespace RelativesInfoService.Implementations
     /// реализация контракта сервиса
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
-    public class RelativesInfoService<TContext> : IRelativesInfoService where TContext: IContextDB, new() 
+    public class RelativesInfoService : IRelativesInfoService
     {
-        public string ConStr { get; set; }
         public IContextDB Context { get; set; }
         public IRepository<Person> Persones { get; set; }
         public IRepository<Relationship> Relationships { get; set; }
 
-        public RelativesInfoService()
+        public RelativesInfoService(IContextDB context)
         {
-            //устанавливается соеденение с БД
-            ConStr = ConfigurationManager.ConnectionStrings["PT1_DB"].ConnectionString;
-            Context = new TContext();
-            Context.CreateContext(ConStr);
+            Context = context;
             Persones = Context.CreateRepository<Person>();
             Relationships = Context.CreateRepository<Relationship>();
         }

@@ -50,6 +50,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ConsoleHost\ConsoleHost.csproj">
+      <Project>{6BEC051E-756B-4403-82D5-732FBE83C0BE}</Project>
+      <Name>ConsoleHost</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DomainModel\DomainModel.csproj">
       <Project>{75EF1703-CF22-4F35-BA9F-454843A2F7F3}</Project>
       <Name>DomainModel</Name>

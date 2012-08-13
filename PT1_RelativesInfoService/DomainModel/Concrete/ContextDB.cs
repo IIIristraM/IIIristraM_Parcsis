@@ -11,17 +11,17 @@ namespace DomainModel.Concrete
     {
         DataContext context;
 
-        public override void CreateContext(string conStr)
+        public ContextDB(string conStr)
         {
             context = new DataContext(conStr);
         }
 
-        public override void SubmitChanges()
+        public void SubmitChanges()
         {
             context.SubmitChanges();
         }
 
-        public override IRepository<T> CreateRepository<T>()
+        public IRepository<T> CreateRepository<T>() where T : class
         {
             return new Repository<T>(context);
         }

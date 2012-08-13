@@ -6,10 +6,9 @@ using System.Data.Linq;
 
 namespace DomainModel.Abstract
 {
-    public abstract class IContextDB
+    public interface IContextDB
     {
-        public abstract void CreateContext(string conStr);
-        public abstract void SubmitChanges();
-        public abstract IRepository<T> CreateRepository<T>() where T:class;
+        void SubmitChanges();
+        IRepository<T> CreateRepository<T>() where T:class;
     }
 }

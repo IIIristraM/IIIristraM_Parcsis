@@ -5,6 +5,7 @@ using System.Text;
 using System.ServiceModel;
 using RISI = RelativesInfoService.Implementations;
 using DomainModel.Concrete;
+using System.Configuration;
 
 namespace ConsoleHost
 {
@@ -16,7 +17,9 @@ namespace ConsoleHost
     {
         static void Main(string[] args)
         {
-            ServiceHost host = new ServiceHost(typeof(RISI.RelativesInfoService<ContextDB>));
+            //устанавливается соеденение с БД и запуск сервиса
+            string conStr = ConfigurationManager.ConnectionStrings["PT1_DB"].ConnectionString;
+            ServiceHostForRIS host = new ServiceHostForRIS(typeof(RISI.RelativesInfoService), new ContextDB(conStr));
             host.Open();
             Console.WriteLine("Service ready...\npress any key to shut it down");
             Console.ReadKey();
