@@ -495,44 +495,43 @@ namespace NUnit_Tests
         [Test]
         public static void ServiceTest()
         {
-            using(context = new ContextDB(conStr))
-            {
-                persones = context.CreateRepository<Person>();
-                relationships = context.CreateRepository<Relationship>();
+            ContextCreator creator = new ContextCreator(conStr);
+            context = creator.CreateContext();
+            persones = context.CreateRepository<Person>();
+            relationships = context.CreateRepository<Relationship>();
 
-                using (ServiceHostForRIS host = new ServiceHostForRIS(typeof(RISI.RelativesInfoService), context))
-                {
-                    host.Open();
-                    Console.WriteLine("Service ready...");
-                    Console.WriteLine("Start TestGetPersonInfo");
-                    Console.WriteLine("XML");
-                    dataFormat = "xml";
-                    TestGetPersonInfo();
-                    Console.WriteLine("JSON");
-                    dataFormat = "json";
-                    TestGetPersonInfo();
-                    Console.WriteLine();
-                    Console.WriteLine("Start TestGetRelativesList");
-                    Console.WriteLine("XML");
-                    dataFormat = "xml";
-                    TestGetRelativesList();
-                    Console.WriteLine("JSON");
-                    dataFormat = "json";
-                    TestGetRelativesList();
-                    Console.WriteLine();
-                    Console.WriteLine("Start TestAddRelative");
-                    TestAddRelative();
-                    Console.WriteLine();
-                    Console.WriteLine("Start TestUpdateRelative");
-                    TestUpdateRelative();
-                    Console.WriteLine();
-                    Console.WriteLine("Start TestUpdateRelationshipState");
-                    TestUpdateRelationshipState();
-                    Console.WriteLine();
-                    Console.WriteLine("Start TestDeleteRelative");
-                    TestDeleteRelative();
-                    host.Close();
-                };
+            using (ServiceHostForRIS host = new ServiceHostForRIS(typeof(RISI.RelativesInfoService), creator))
+            {
+                host.Open();
+                Console.WriteLine("Service ready...");
+                Console.WriteLine("Start TestGetPersonInfo");
+                Console.WriteLine("XML");
+                dataFormat = "xml";
+                TestGetPersonInfo();
+                Console.WriteLine("JSON");
+                dataFormat = "json";
+                TestGetPersonInfo();
+                Console.WriteLine();
+                Console.WriteLine("Start TestGetRelativesList");
+                Console.WriteLine("XML");
+                dataFormat = "xml";
+                TestGetRelativesList();
+                Console.WriteLine("JSON");
+                dataFormat = "json";
+                TestGetRelativesList();
+                Console.WriteLine();
+                Console.WriteLine("Start TestAddRelative");
+                TestAddRelative();
+                Console.WriteLine();
+                Console.WriteLine("Start TestUpdateRelative");
+                TestUpdateRelative();
+                Console.WriteLine();
+                Console.WriteLine("Start TestUpdateRelationshipState");
+                TestUpdateRelationshipState();
+                Console.WriteLine();
+                Console.WriteLine("Start TestDeleteRelative");
+                TestDeleteRelative();
+                host.Close();
             };
         }
     }

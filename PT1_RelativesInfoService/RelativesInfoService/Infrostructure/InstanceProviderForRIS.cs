@@ -14,16 +14,16 @@ namespace RelativesInfoService.Infrostructure
 {
     public class InstanceProviderForRIS : IInstanceProvider
     {
-        private IContextDB context;
+        private IContextCreator creator;
 
-        public InstanceProviderForRIS(IContextDB context)
+        public InstanceProviderForRIS(IContextCreator creator)
         {
-            this.context = context;
+            this.creator = creator;
         }
 
         public object GetInstance(InstanceContext instanceContext, Message message)
         {
-            return new RISI.RelativesInfoService(context);
+            return new RISI.RelativesInfoService(creator);
         }
 
         public object GetInstance(InstanceContext instanceContext)

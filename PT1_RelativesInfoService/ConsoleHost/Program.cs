@@ -19,16 +19,16 @@ namespace ConsoleHost
         {
             //устанавливается соеденение с БД и запуск сервиса
             string conStr = ConfigurationManager.ConnectionStrings["PT1_DB"].ConnectionString;
-            using (ContextDB context = new ContextDB(conStr))
+            ContextCreator creator = new ContextCreator(conStr); 
+
+            using (ServiceHostForRIS host = new ServiceHostForRIS(typeof(RISI.RelativesInfoService), creator))
             {
-                using (ServiceHostForRIS host = new ServiceHostForRIS(typeof(RISI.RelativesInfoService), context))
-                {
-                    host.Open();
-                    Console.WriteLine("Service ready...\npress any key to shut it down");
-                    Console.ReadKey();
-                    host.Close();
-                };
+                host.Open();
+                Console.WriteLine("Service ready...\npress any key to shut it down");
+                Console.ReadKey();
+                host.Close();
             };
+
         }
     }
 }

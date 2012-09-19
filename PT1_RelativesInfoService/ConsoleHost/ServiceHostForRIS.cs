@@ -10,16 +10,17 @@ namespace ConsoleHost
 {
     public class ServiceHostForRIS : ServiceHost
     {
-        private IContextDB context;
+        private IContextCreator creator;
 
-        public ServiceHostForRIS(Type serviceType, IContextDB context) : base(serviceType)
+        public ServiceHostForRIS(Type serviceType, IContextCreator creator)
+            : base(serviceType)
         {
-            this.context = context;
+            this.creator = creator;
         }
 
         protected override void OnOpen(TimeSpan timeout)
         {
-            Description.Behaviors.Add(new ServiceBehaviorForRIS(context));
+            Description.Behaviors.Add(new ServiceBehaviorForRIS(creator));
             base.OnOpen(timeout);
         }
     }

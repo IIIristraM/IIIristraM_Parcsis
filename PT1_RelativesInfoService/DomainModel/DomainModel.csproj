@@ -42,8 +42,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Abstract\IContextCreator.cs" />
     <Compile Include="Abstract\IContextDB.cs" />
     <Compile Include="Abstract\IRepository.cs" />
+    <Compile Include="Concrete\ContextCreator.cs" />
     <Compile Include="Concrete\ContextDB.cs" />
     <Compile Include="Concrete\Repository.cs" />
     <Compile Include="Entities\Person.cs" />

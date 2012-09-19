@@ -13,11 +13,11 @@ namespace RelativesInfoService.Infrostructure
 {
     public class ServiceBehaviorForRIS : IServiceBehavior
     {
-        private IContextDB context;
+        private IContextCreator creator;
 
-        public ServiceBehaviorForRIS(IContextDB context)
+        public ServiceBehaviorForRIS(IContextCreator creator)
         {
-            this.context = context;
+            this.creator = creator;
         }
 
         public void ApplyDispatchBehavior(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase)
@@ -28,7 +28,7 @@ namespace RelativesInfoService.Infrostructure
                 {
                     if (!ed.IsSystemEndpoint)
                     {
-                        ed.DispatchRuntime.InstanceProvider = new InstanceProviderForRIS(context);
+                        ed.DispatchRuntime.InstanceProvider = new InstanceProviderForRIS(creator);
                     }
                 }
             }
