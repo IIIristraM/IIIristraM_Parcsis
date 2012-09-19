@@ -11,7 +11,7 @@ namespace ConsoleHost
 {
     /// <summary>
     ///хостинг сервиса
-    ///при отладке проект должен быть установлен как StartUp
+    ///при отладке проект должен быть усiтановлен как StartUp
     /// </summary>
     class Program
     {
@@ -19,11 +19,16 @@ namespace ConsoleHost
         {
             //устанавливается соеденение с БД и запуск сервиса
             string conStr = ConfigurationManager.ConnectionStrings["PT1_DB"].ConnectionString;
-            ServiceHostForRIS host = new ServiceHostForRIS(typeof(RISI.RelativesInfoService), new ContextDB(conStr));
-            host.Open();
-            Console.WriteLine("Service ready...\npress any key to shut it down");
-            Console.ReadKey();
-            host.Close();
+            using (ContextDB context = new ContextDB(conStr))
+            {
+                using (ServiceHostForRIS host = new ServiceHostForRIS(typeof(RISI.RelativesInfoService), context))
+                {
+                    host.Open();
+                    Console.WriteLine("Service ready...\npress any key to shut it down");
+                    Console.ReadKey();
+                    host.Close();
+                };
+            };
         }
     }
 }

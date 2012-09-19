@@ -19,10 +19,10 @@
             <option id="auto">Auto</option>
             <option id="manually">Manually</option>
         </select><br/><br/>
-        <label>Person pasport number:</label>
-        <input id="PasportTextBox" value="3610123456" style='width: 150px'/><br/><br/>
-        <label>Relative pasport number:</label>
-        <input id="relPasportTextBox" value="3215654321" style='width: 150px'/><br/>
+        <label>Person passport number:</label>
+        <input id="PassportTextBox" value="" style='width: 150px'/><br/><br/>
+        <label>Relative passport number:</label>
+        <input id="relPassportTextBox" value="" style='width: 150px'/><br/>
         <label>Relative second name:</label>
         <input id="relSecondName" value="" style='width: 150px'/><br/>
         <label>Relative first name:</label>
@@ -37,8 +37,8 @@
         </select><br/>
         <label>Relative date of birth:</label>
         <input id="relDateOfBirth" value="" style='width: 150px'/><br/>
-        <label>Relative adresse:</label>
-        <input id="relAdresse" value="" style='width: 150px'/><br/>
+        <label>Relative address:</label>
+        <input id="relAddress" value="" style='width: 150px'/><br/>
         <label>Relationship state:</label>
         <select id="SelectRelationshipState" name="D1" style='width: 156px'>
             <option id="emptyRS"></option>
@@ -56,7 +56,10 @@
             <option id="uncle">Uncle</option>
             <option id="nephew">Nephew</option>
             <option id="niece">Niece</option>
+            <option id="wife">Wife</option>
+            <option id="husband">Husband</option>
         </select><br/>
+        <button id="GetPersonInfo" style='width: 357px'>Get Person Info</button><br/>
         <button id="AddRelative" style='width: 110px'>Add Relative</button>
         <button id="DeleteRelative" style='width: 120px'>Delete Relative</button>
         <button id="UpdateRelative" style='width: 120px'>Update Relative</button><br/>
@@ -74,6 +77,7 @@
 <script src="../../Scripts/jquery-1.4.1.js" type="text/javascript"></script>
 <script type="text/javascript">
 
+    var GetPersonInfoURL = "http://localhost:8732/Design_Time_Addresses/RESTService/GetPersonInfo";
     var GetRelativesListURL = "http://localhost:8732/Design_Time_Addresses/RESTService/GetRelativesList";
     var AddRelativeURL = "http://localhost:8732/Design_Time_Addresses/RESTService/AddRelative";
     var DeleteRelativeURL = "http://localhost:8732/Design_Time_Addresses/RESTService/DeleteRelative";
@@ -110,6 +114,8 @@
     $("#uncle").click(function () { relationshipState = "uncle"; });
     $("#nephew").click(function () { relationshipState = "nephew"; });
     $("#niece").click(function () { relationshipState = "niece"; });
+    $("#wife").click(function () { relationshipState = "wife"; });
+    $("#husband").click(function () { relationshipState = "husband"; });
 
     function makeTable(jObject) {
         var jArrayObject = jObject
@@ -165,20 +171,60 @@
         return table;
     }
 
+    $("#GetPersonInfo").click(function () {
+     $.ajax({
+            cache: false,
+            type: "GET",
+            async: false,
+            dataType: format.toString(),
+            url: GetPersonInfoURL + "?passportNumber=" + $("#PassportTextBox").attr('value'),
+            success: function (person) {
+                 if (format.toString() == "html") {
+                    alert("SUCCESS: " + person);
+                    text = person;
+                    var obj = {};
+                    var table = makeTable(obj);
+                    $("#spanRelativesList").html("").append(table);
+                } else {
+                    alert(JSON.stringify("SUCCESS: " + person));
+                    text = JSON.stringify(person);
+
+                    var table = makeTable(person);
+                    $("#spanRelativesList").html("").append(table);
+                }
+                var table2 = document.createElement("table");
+                table2.setAttribute('border', '1px');
+                table2.setAttribute('cellpadding', '4px');
+                table2.setAttribute('rules', 'all');
+                var tbody = document.createElement("tbody");
+                var tr = document.createElement('tr');
+                var td = document.createElement('td');
+                td.appendChild(document.createTextNode(text));
+                tr.appendChild(td);
+                tbody.appendChild(tr);
+                table2.appendChild(tbody);
+                $("#spanText").html("").append(table2);
+            },
+            error: function (xhr) {
+                alert(xhr.responseText);
+            }
+        });
+    })
+
     $("#GetRelativesList").click(function () {
         var jData = {};
-        if (($("#relAdresse").attr('value') == "") &&
+        if (($("#relAddress").attr('value') == "") &&
            ($("#relDateOfBirth").attr('value') == "") &&
            ($("#relFirstName").attr('value') == "") &&
-           ($("#relPasportTextBox").attr('value') == "") &&
+           ($("#relPassportTextBox").attr('value') == "") &&
            ($("#relSecondName").attr('value') == "") &&
            ($("#relThirdName").attr('value') == "") &&
            (sex == "")) { }
         else {
-            jPerson = { Adresse: $("#relAdresse").attr('value'),
+            jPerson = { Address: $("#relAddress").attr('value'),
                 DateOfBirth: "/Date(" + Date.parse($("#relDateOfBirth").attr('value')) + " + 0400)/",
                 FirstName: $("#relFirstName").attr('value'),
-                PasportNumber: $("#relPasportTextBox").attr('value'),
+                PassportNumber: $("#relPassportTextBox").attr('value'),
                 PersonID: 0,
                 SecondName: $("#relSecondName").attr('value'),
                 Sex: sex,
@@ -193,7 +239,7 @@
             cache: false,
             type: "POST",
             async: false,
-            url: GetRelativesListURL + "?pasportNumber=" + $("#PasportTextBox").attr('value'),
+            url: GetRelativesListURL + "?passportNumber=" + $("#PassportTextBox").attr('value'),
             data: JSON.stringify(jData),
             contentType: "application/json",
             dataType: format.toString(),
@@ -235,10 +281,10 @@
 
         var jData = {};
         var relative = {};
-        jPerson = { Adresse: $("#relAdresse").attr('value'),
+        jPerson = { Address: $("#relAddress").attr('value'),
             DateOfBirth: "/Date(" + Date.parse($("#relDateOfBirth").attr('value')) + " + 0400)/",
             FirstName: $("#relFirstName").attr('value'),
-            PasportNumber: $("#relPasportTextBox").attr('value'),
+            PassportNumber: $("#relPassportTextBox").attr('value'),
             PersonID: 0,
             SecondName: $("#relSecondName").attr('value'),
             Sex: sex,
@@ -254,7 +300,7 @@
             cache: false,
             type: "POST",
             async: false,
-            url: AddRelativeURL + "/" + $("#PasportTextBox").attr('value') + "/" + mode,
+            url: AddRelativeURL + "?passportNumber=" + $("#PassportTextBox").attr('value') + "&mode=" + mode,
             data: JSON.stringify(jData),
             contentType: "application/json",
             dataType: format.toString(),
@@ -273,7 +319,7 @@
             type: "GET",
             async: false,
             dataType: format.toString(),
-            url: UpdateRelationshipStateURL + "/" + $("#PasportTextBox").attr('value') + "/" + $("#relPasportTextBox").attr('value') + "/" + relationshipState + "/" + mode,
+            url: UpdateRelationshipStateURL + "?passportNumber1=" + $("#PassportTextBox").attr('value') + "&passportNumber2=" + $("#relPassportTextBox").attr('value') + "&updatedState=" + relationshipState + "&mode=" + mode,
             success: function (code) {
                 alert(code);
             },
@@ -289,7 +335,7 @@
             type: "GET",
             async: false,
             dataType: format.toString(),
-            url: DeleteRelativeURL + "/" + $("#PasportTextBox").attr('value') + "/" + $("#relPasportTextBox").attr('value'),
+            url: DeleteRelativeURL + "?passportNumber=" + $("#PassportTextBox").attr('value') + "&relPassportNumber=" + $("#relPassportTextBox").attr('value'),
             success: function (code) {
                 alert(code);
             },
@@ -301,10 +347,10 @@
 
     $("#UpdateRelative").click(function () {
 
-        jPerson = { Adresse: $("#relAdresse").attr('value'),
+        jPerson = { Address: $("#relAddress").attr('value'),
             DateOfBirth: "/Date(" + Date.parse($("#relDateOfBirth").attr('value')) + " + 0400)/",
             FirstName: $("#relFirstName").attr('value'),
-            PasportNumber: $("#relPasportTextBox").attr('value'),
+            PassportNumber: $("#relPassportTextBox").attr('value'),
             PersonID: 0,
             SecondName: $("#relSecondName").attr('value'),
             Sex: sex,
@@ -319,7 +365,7 @@
             cache: false,
             type: "POST",
             async: false,
-            url: UpdateRelativeURL + "/" + $("#PasportTextBox").attr('value') + "/" + $("#relPasportTextBox").attr('value'),
+            url: UpdateRelativeURL + "?passportNumber=" + $("#PassportTextBox").attr('value') + "&relPassportNumber=" + $("#relPassportTextBox").attr('value'),
             data: JSON.stringify(jData),
             contentType: "application/json",
             dataType: format.toString(),

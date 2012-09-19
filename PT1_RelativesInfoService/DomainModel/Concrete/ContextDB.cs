@@ -25,5 +25,10 @@ namespace DomainModel.Concrete
         {
             return new Repository<T>(context);
         }
+
+        public void Dispose()
+        {
+            context.Dispose();
+        }
     }
 }

@@ -60,7 +60,7 @@ namespace NUnit_Tests
             //адресс функции сервиса
             string operationUrl = "http://localhost:8732/Design_Time_Addresses/RESTService/GetRelativesList";
             //параметры для функции
-            string passportNumber = "3610123456";
+            string passportNumber = "1111654321";
             Person filter = new Person { Address = "", 
                                          DateOfBirth = new DateTime(), 
                                          FirstName = "Igor", 
@@ -185,7 +185,7 @@ namespace NUnit_Tests
             settings.DateFormatHandling = DateFormatHandling.MicrosoftDateFormat;
 
             string operationUrl = "http://localhost:8732/Design_Time_Addresses/RESTService/GetPersonInfo";
-            string passportNumber = "3610123456";
+            string passportNumber = "1111654321";
 
             #region Create Request
             WebRequest req = WebRequest.Create(operationUrl + "?passportNumber=" + passportNumber);
@@ -230,13 +230,13 @@ namespace NUnit_Tests
             settings.DateFormatHandling = DateFormatHandling.MicrosoftDateFormat;
 
             string operationUrl = "http://localhost:8732/Design_Time_Addresses/RESTService/AddRelative";
-            string passportNumber = "3610123456";
+            string passportNumber = "1111654321";
             Person person = new Person
             {
                 Address = "",
                 DateOfBirth = null,
                 FirstName = "Julia",
-                PassportNumber = "3610112233",
+                PassportNumber = "1114654321",
                 PersonID = 0,
                 SecondName = "Glazacheva",
                 Sex = "female",
@@ -308,8 +308,8 @@ namespace NUnit_Tests
             settings.DateFormatHandling = DateFormatHandling.MicrosoftDateFormat;
 
             string operationUrl = "http://localhost:8732/Design_Time_Addresses/RESTService/DeleteRelative";
-            string passportNumber = "3610123456";
-            string relPassportNumber = "3610112233";
+            string passportNumber = "1111654321";
+            string relPassportNumber = "1114654321";
 
             int i = 0;
             int[] personesCount = new int[2];
@@ -360,8 +360,8 @@ namespace NUnit_Tests
             settings.DateFormatHandling = DateFormatHandling.MicrosoftDateFormat;
 
             string operationUrl = "http://localhost:8732/Design_Time_Addresses/RESTService/UpdateRelative";
-            string passportNumber = "3610123456";
-            string relPassportNumber = "3215654321";
+            string passportNumber = "1111654321";
+            string relPassportNumber = "1112654321";
             Person updatedRelative = new Person
             {
                 Address = "",
@@ -433,8 +433,8 @@ namespace NUnit_Tests
             settings.DateFormatHandling = DateFormatHandling.MicrosoftDateFormat;
 
             string operationUrl = "http://localhost:8732/Design_Time_Addresses/RESTService/UpdateRelationshipState";
-            string passportNumber = "3610123456";
-            string relPassportNumber = "3610112233";
+            string passportNumber = "1111654321";
+            string relPassportNumber = "1114654321";
 
             string updatedState = "aunt";
 
@@ -481,7 +481,7 @@ namespace NUnit_Tests
                 }
                 else
                 {
-                    Assert.IsTrue(sql.Count() == 6);
+                    Assert.IsTrue(sql.Count() == 4);
                 }
 
                 i++;
@@ -495,48 +495,45 @@ namespace NUnit_Tests
         [Test]
         public static void ServiceTest()
         {
-            if (context == null)
+            using(context = new ContextDB(conStr))
             {
-                context = new ContextDB(conStr);
                 persones = context.CreateRepository<Person>();
                 relationships = context.CreateRepository<Relationship>();
-            }
 
-            ServiceHostForRIS host = new ServiceHostForRIS(typeof(RISI.RelativesInfoService), context);
-            //try
-            //{
-                if(host.State != CommunicationState.Opened) host.Open();
-            //}
-            //catch { }
-            Console.WriteLine("Service ready...");
-            Console.WriteLine("Start TestGetPersonInfo");
-            Console.WriteLine("XML");
-            dataFormat = "xml";
-            TestGetPersonInfo();
-            Console.WriteLine("JSON");
-            dataFormat = "json";
-            TestGetPersonInfo();
-            Console.WriteLine();
-            Console.WriteLine("Start TestGetRelativesList");
-            Console.WriteLine("XML");
-            dataFormat = "xml";
-            TestGetRelativesList();
-            Console.WriteLine("JSON");
-            dataFormat = "json";
-            TestGetRelativesList();
-            Console.WriteLine();
-            Console.WriteLine("Start TestAddRelative");
-            TestAddRelative();
-            Console.WriteLine();
-            Console.WriteLine("Start TestUpdateRelative");
-            TestUpdateRelative();
-            Console.WriteLine();
-            Console.WriteLine("Start TestUpdateRelationshipState");
-            TestUpdateRelationshipState();
-            Console.WriteLine();
-            Console.WriteLine("Start TestDeleteRelative");
-            TestDeleteRelative();
-            host.Close();
+                using (ServiceHostForRIS host = new ServiceHostForRIS(typeof(RISI.RelativesInfoService), context))
+                {
+                    host.Open();
+                    Console.WriteLine("Service ready...");
+                    Console.WriteLine("Start TestGetPersonInfo");
+                    Console.WriteLine("XML");
+                    dataFormat = "xml";
+                    TestGetPersonInfo();
+                    Console.WriteLine("JSON");
+                    dataFormat = "json";
+                    TestGetPersonInfo();
+                    Console.WriteLine();
+                    Console.WriteLine("Start TestGetRelativesList");
+                    Console.WriteLine("XML");
+                    dataFormat = "xml";
+                    TestGetRelativesList();
+                    Console.WriteLine("JSON");
+                    dataFormat = "json";
+                    TestGetRelativesList();
+                    Console.WriteLine();
+                    Console.WriteLine("Start TestAddRelative");
+                    TestAddRelative();
+                    Console.WriteLine();
+                    Console.WriteLine("Start TestUpdateRelative");
+                    TestUpdateRelative();
+                    Console.WriteLine();
+                    Console.WriteLine("Start TestUpdateRelationshipState");
+                    TestUpdateRelationshipState();
+                    Console.WriteLine();
+                    Console.WriteLine("Start TestDeleteRelative");
+                    TestDeleteRelative();
+                    host.Close();
+                };
+            };
         }
     }
 }

@@ -438,7 +438,6 @@ namespace RelativesInfoService.Implementations
             string message = "relative deleted successfully";
             try
             {
-                //ищем и удаляем запись, если запись не существует, функция вернет - 0
                 var result = from r in Relationships.GetContent()
                              from p1 in Persones.GetContent()
                              from p2 in Persones.GetContent()

@@ -61,8 +61,7 @@ namespace RelativesInfoService.Contracts
         ///2) manually - в этом режиме родственник добавится только к осуществившей запрос персоне
         ///передается в Url
         ///возвращаемое значение:
-        ///1 - операция успешно завершилась
-        ///0 - операцию не удалось произвести
+        ///сообщение об успехе, либо ошибке при выполнении операции
         /// </summary>
         /// <param name="passportNumber"></param>
         /// <param name="relative"></param>
@@ -80,8 +79,7 @@ namespace RelativesInfoService.Contracts
         ///передается в Url
         ///relPasportNumber - номер паспорта удаляемого родственника
         ///возвращаемое значение:
-        ///1 - операция успешно завершилась
-        ///0 - операцию не удалось произвести
+        ///сообщение об успехе, либо ошибке при выполнении операции
         /// </summary>
         /// <param name="passportNumber"></param>
         /// <param name="relPassportNumber"></param>
@@ -101,8 +99,7 @@ namespace RelativesInfoService.Contracts
         ///updatedRelative - набор обновленных данных о родственнике
         ///передается в теле запроса
         ///возвращаемое значение:
-        ///1 - операция успешно завершилась
-        ///0 - операцию не удалось произвести
+        ///сообщение об успехе, либо ошибке при выполнении операции
         /// </summary>
         /// <param name="passportNumber"></param>
         /// <param name="relPassportNumber"></param>
@@ -133,8 +130,7 @@ namespace RelativesInfoService.Contracts
         ///2) manually - в этом режиме изменяется только запрашиваемое отношение
         ///передается в Url
         ///возвращаемое значение:
-        ///1 - операция успешно завершилась
-        ///0 - операцию не удалось произвести
+        ///сообщение об успехе, либо ошибке при выполнении операции
         /// </summary>
         /// <param name="passportNumber1"></param>
         /// <param name="passportNumber2"></param>

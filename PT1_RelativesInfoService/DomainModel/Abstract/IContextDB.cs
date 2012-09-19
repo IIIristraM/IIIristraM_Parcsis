@@ -6,7 +6,7 @@ using System.Data.Linq;
 
 namespace DomainModel.Abstract
 {
-    public interface IContextDB
+    public interface IContextDB : IDisposable
     {
         void SubmitChanges();
         IRepository<T> CreateRepository<T>() where T:class;
